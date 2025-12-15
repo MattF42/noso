@@ -865,6 +865,7 @@ libbitcoin_consensus_a_SOURCES = \
   consensus/validation.h \
   hash.cpp \
   hash.h \
+  hash_kawpow.h \
   hash_x11.h \
   prevector.h \
   primitives/block.cpp \
