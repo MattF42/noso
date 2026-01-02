@@ -79,7 +79,10 @@ static CBlock CreateDevNetGenesisBlock(const uint256 &prevBlockHash, const std::
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
     const char* pszTimestamp = "Wired 09/Jan/2014 The Grand Experiment Goes Live: Overstock.com Is Now Accepting Bitcoins";
-    const CScript genesisOutputScript = CScript() << ParseHex("040184710fa689ad5023690c80f3a49c8f13f8d45b8c857fbcbc8bc4a8e4d3eb4b10f4d4604fa08dce601aaf0f470216fe1b51850b4acf21b179c45070ac7b03a9") << OP_CHECKSIG;
+    // NOSOR: DF P2WPKH scriptPubKey for 9M premine (temporary single-sig placeholder)
+    // Compressed pubkey: 030e5d3490facf0e9e0ea4860bdc674d61453a04d61e2522b071eb5b5d6b142717
+    // P2WPKH scriptPubKey: 0014697cd07c801b8bba094f759de4fe742a6bae0470
+    const CScript genesisOutputScript = CScript() << ParseHex("0014697cd07c801b8bba094f759de4fe742a6bae0470");
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
 
@@ -160,7 +163,7 @@ class CMainParams : public CChainParams {
 public:
     CMainParams() {
         strNetworkID = CBaseChainParams::MAIN;
-        consensus.nSubsidyHalvingInterval = 210240; // Note: actual number of blocks per calendar year with DGW v3 is ~200700 (for example 449750 - 249050)
+        consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks
         consensus.nMasternodePaymentsStartBlock = 100000; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 158000; // actual historical value
         consensus.nMasternodePaymentsIncreasePeriod = 576*30; // 17280 - actual historical value
@@ -241,10 +244,10 @@ public:
         m_assumed_blockchain_size = 54;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1390095618, 531040, 0x1e0ffff0, 1, 9'000'000 * COIN);
+        genesis = CreateGenesisBlock(1390095618, 1153631, 0x1e0ffff0, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x0000075f59dc8010ed51ded0e9129460cd3e0ce40e310d27f5480bf65faca280"));
-        assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0000069418e9ac4b5a84d6cdb9449809db96e576a0ba359516947681cfd86484"));
+        assert(genesis.hashMerkleRoot == uint256S("0x8ad2c8d59ce15c259f9c3245f8fca83fb12071e0b810c42f2e68281aa641848a"));
 
         // Note that of those which support the service bits prefix, most only support a subset of
         // possible options.
@@ -322,7 +325,7 @@ class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = CBaseChainParams::TESTNET;
-        consensus.nSubsidyHalvingInterval = 210240;
+        consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks
         consensus.nMasternodePaymentsStartBlock = 4010; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 4030;
         consensus.nMasternodePaymentsIncreasePeriod = 10;
@@ -398,10 +401,10 @@ public:
         m_assumed_blockchain_size = 10;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1390666206UL, 1512266, 0x1e0ffff0, 1, 9'000'000 * COIN);
+        genesis = CreateGenesisBlock(1390666206UL, 791910, 0x1e0ffff0, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x000004a01838f5f8381644e4c5c584e61683fd6fec6f61ae3109a23397cacb7a"));
-        assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
+        assert(consensus.hashGenesisBlock == uint256S("0x00000e73d038652e78b784027e649b036c302e847e3a4170cd12f49713b82d23"));
+        assert(genesis.hashMerkleRoot == uint256S("0x8ad2c8d59ce15c259f9c3245f8fca83fb12071e0b810c42f2e68281aa641848a"));
 
         vFixedSeeds.clear();
         vFixedSeeds = std::vector<uint8_t>(std::begin(chainparams_seed_test), std::end(chainparams_seed_test));
@@ -478,7 +481,7 @@ class CDevNetParams : public CChainParams {
 public:
     explicit CDevNetParams(const ArgsManager& args) {
         strNetworkID = CBaseChainParams::DEVNET;
-        consensus.nSubsidyHalvingInterval = 210240;
+        consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks
         consensus.nMasternodePaymentsStartBlock = 4010; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 4030;
         consensus.nMasternodePaymentsIncreasePeriod = 10;
@@ -714,7 +717,7 @@ class CRegTestParams : public CChainParams {
 public:
     explicit CRegTestParams(const ArgsManager& args) {
         strNetworkID =  CBaseChainParams::REGTEST;
-        consensus.nSubsidyHalvingInterval = 150;
+        consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks (same as mainnet/testnet)
         consensus.nMasternodePaymentsStartBlock = 240;
         consensus.nMasternodePaymentsIncreaseBlock = 350;
         consensus.nMasternodePaymentsIncreasePeriod = 10;
@@ -796,7 +799,7 @@ public:
         UpdateDIP3ParametersFromArgs(args);
         UpdateBudgetParametersFromArgs(args);
 
-        genesis = CreateGenesisBlock(1417713337, 0, 0x207fffff, 1, 9'000'000 * COIN);
+        genesis = CreateGenesisBlock(1417713337, 2, 0x207fffff, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
