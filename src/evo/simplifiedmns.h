@@ -1,4 +1,5 @@
 // Copyright (c) 2017-2024 The Dash Core developers
+// Copyright (c) 2026 The NOSOR Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 

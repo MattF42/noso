@@ -43,6 +43,7 @@ Updates all the copyright headers of `The Dash Core developers` which were
 changed in a year more recent than is listed. For example:
 ```
 // Copyright (c) <firstYear>-<lastYear> The Dash Core developers
+// Copyright (c) 2026 The NOSOR Core developers
 ```
 will be updated to:
 ```
