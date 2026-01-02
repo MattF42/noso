@@ -60,7 +60,7 @@ if ENABLE_ZMQ
 LIBBITCOIN_ZMQ=libbitcoin_zmq.a
 endif
 if BUILD_BITCOIN_LIBS
-LIBBITCOINCONSENSUS=libdashconsensus.la
+LIBBITCOINCONSENSUS=libnosorconsensus.la
 endif
 if ENABLE_WALLET
 LIBBITCOIN_WALLET=libbitcoin_wallet.a
@@ -124,22 +124,22 @@ EXTRA_LIBRARIES += \
   $(LIBBITCOIN_ZMQ)
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += dashd
+  bin_PROGRAMS += nosord
 endif
 
 if BUILD_BITCOIN_NODE
-  bin_PROGRAMS += dash-node
+  bin_PROGRAMS += nosor-node
 endif
 
 if BUILD_BITCOIN_CLI
-  bin_PROGRAMS += dash-cli
+  bin_PROGRAMS += nosor-cli
 endif
 if BUILD_BITCOIN_TX
-  bin_PROGRAMS += dash-tx
+  bin_PROGRAMS += nosor-tx
 endif
 if ENABLE_WALLET
 if BUILD_BITCOIN_WALLET
-  bin_PROGRAMS += dash-wallet
+  bin_PROGRAMS += nosor-wallet
 endif
 endif
 
@@ -1038,47 +1038,47 @@ bitcoin_bin_ldadd = \
 
 bitcoin_bin_ldadd += $(BACKTRACE_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(SQLITE_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(GMP_LIBS)
 
-dashd_SOURCES = $(bitcoin_daemon_sources) init/bitcoind.cpp
-dashd_CPPFLAGS = $(bitcoin_bin_cppflags)
-dashd_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dashd_LDFLAGS = $(bitcoin_bin_ldflags)
-dashd_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd)
+nosord_SOURCES = $(bitcoin_daemon_sources) init/bitcoind.cpp
+nosord_CPPFLAGS = $(bitcoin_bin_cppflags)
+nosord_CXXFLAGS = $(bitcoin_bin_cxxflags)
+nosord_LDFLAGS = $(bitcoin_bin_ldflags)
+nosord_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd)
 
-dash_node_SOURCES = $(bitcoin_daemon_sources) init/bitcoin-node.cpp
-dash_node_CPPFLAGS = $(bitcoin_bin_cppflags)
-dash_node_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dash_node_LDFLAGS = $(bitcoin_bin_ldflags)
-dash_node_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd) $(LIBBITCOIN_IPC) $(LIBMULTIPROCESS_LIBS)
+nosor_node_SOURCES = $(bitcoin_daemon_sources) init/bitcoin-node.cpp
+nosor_node_CPPFLAGS = $(bitcoin_bin_cppflags)
+nosor_node_CXXFLAGS = $(bitcoin_bin_cxxflags)
+nosor_node_LDFLAGS = $(bitcoin_bin_ldflags)
+nosor_node_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd) $(LIBBITCOIN_IPC) $(LIBMULTIPROCESS_LIBS)
 
-# dash-cli binary #
-dash_cli_SOURCES = bitcoin-cli.cpp
-dash_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-dash_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dash_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+# nosor-cli binary #
+nosor_cli_SOURCES = bitcoin-cli.cpp
+nosor_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+nosor_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+nosor_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-dash_cli_SOURCES += dash-cli-res.rc
+nosor_cli_SOURCES += nosor-cli-res.rc
 endif
 
-dash_cli_LDADD = \
+nosor_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
-dash_cli_LDADD += $(BACKTRACE_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
+nosor_cli_LDADD += $(BACKTRACE_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
 #
 
-# dash-tx binary #
-dash_tx_SOURCES = bitcoin-tx.cpp
-dash_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-dash_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dash_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+# nosor-tx binary #
+nosor_tx_SOURCES = bitcoin-tx.cpp
+nosor_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+nosor_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+nosor_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-dash_tx_SOURCES += dash-tx-res.rc
+nosor_tx_SOURCES += nosor-tx-res.rc
 endif
 
-dash_tx_LDADD = \
+nosor_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -1087,16 +1087,16 @@ dash_tx_LDADD = \
   $(LIBDASHBLS) \
   $(LIBSECP256K1)
 
-dash_tx_LDADD += $(BACKTRACE_LIBS) $(GMP_LIBS)
+nosor_tx_LDADD += $(BACKTRACE_LIBS) $(GMP_LIBS)
 #
 
-# dash-wallet binary #
-dash_wallet_SOURCES = bitcoin-wallet.cpp
-dash_wallet_SOURCES += init/bitcoin-wallet.cpp
-dash_wallet_CPPFLAGS = $(bitcoin_bin_cppflags)
-dash_wallet_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dash_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
-dash_wallet_LDADD = \
+# nosor-wallet binary #
+nosor_wallet_SOURCES = bitcoin-wallet.cpp
+nosor_wallet_SOURCES += init/bitcoin-wallet.cpp
+nosor_wallet_CPPFLAGS = $(bitcoin_bin_cppflags)
+nosor_wallet_CXXFLAGS = $(bitcoin_bin_cxxflags)
+nosor_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
+nosor_wallet_LDADD = \
   $(LIBBITCOIN_WALLET_TOOL) \
   $(LIBBITCOIN_WALLET) \
   $(LIBBITCOIN_COMMON) \
@@ -1113,21 +1113,21 @@ dash_wallet_LDADD = \
   $(GMP_LIBS)
 
 if TARGET_WINDOWS
-dash_wallet_SOURCES += dash-wallet-res.rc
+nosor_wallet_SOURCES += nosor-wallet-res.rc
 endif
 #
 
-# dashconsensus library #
+# nosorconsensus library #
 if BUILD_BITCOIN_LIBS
 include_HEADERS = script/bitcoinconsensus.h
-libdashconsensus_la_SOURCES = support/cleanse.cpp $(crypto_libbitcoin_crypto_base_la_SOURCES) $(crypto_libbitcoin_crypto_sph_la_SOURCES) $(libbitcoin_consensus_a_SOURCES)
+libnosorconsensus_la_SOURCES = support/cleanse.cpp $(crypto_libbitcoin_crypto_base_la_SOURCES) $(crypto_libbitcoin_crypto_sph_la_SOURCES) $(libbitcoin_consensus_a_SOURCES)
 
-libdashconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
-libdashconsensus_la_LIBADD = $(LIBDASHBLS) $(LIBSECP256K1) $(GMP_LIBS)
-libdashconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL -DDISABLE_OPTIMIZED_SHA256
-libdashconsensus_la_CPPFLAGS += -isystem$(srcdir)/dashbls/include -isystem$(srcdir)/dashbls/depends/relic/include -isystem$(srcdir)/dashbls/depends/minialloc/include
-libdashconsensus_la_CPPFLAGS += -isystem$(srcdir)/immer
-libdashconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libnosorconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
+libnosorconsensus_la_LIBADD = $(LIBDASHBLS) $(LIBSECP256K1) $(GMP_LIBS)
+libnosorconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL -DDISABLE_OPTIMIZED_SHA256
+libnosorconsensus_la_CPPFLAGS += -isystem$(srcdir)/dashbls/include -isystem$(srcdir)/dashbls/depends/relic/include -isystem$(srcdir)/dashbls/depends/minialloc/include
+libnosorconsensus_la_CPPFLAGS += -isystem$(srcdir)/immer
+libnosorconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 
 endif
 #

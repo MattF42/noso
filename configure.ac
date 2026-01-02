@@ -6,8 +6,8 @@ define(_CLIENT_VERSION_BUILD, 2)
 define(_CLIENT_VERSION_IS_RELEASE, false)
 define(_COPYRIGHT_YEAR, 2025)
 define(_COPYRIGHT_HOLDERS,[The %s developers])
-define(_COPYRIGHT_HOLDERS_SUBSTITUTION,[[Dash Core]])
-AC_INIT([Dash Core],m4_join([.], _CLIENT_VERSION_MAJOR, _CLIENT_VERSION_MINOR, _CLIENT_VERSION_BUILD),[https://github.com/dashpay/dash/issues],[dashcore],[https://dash.org/])
+define(_COPYRIGHT_HOLDERS_SUBSTITUTION,[[NOSOR Core]])
+AC_INIT([NOSOR Core],m4_join([.], _CLIENT_VERSION_MAJOR, _CLIENT_VERSION_MINOR, _CLIENT_VERSION_BUILD),[https://github.com/MattF42/noso/issues],[nosorcore],[https://github.com/MattF42/noso])
 AC_CONFIG_SRCDIR([src/validation.cpp])
 AC_CONFIG_HEADERS([src/config/bitcoin-config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -29,15 +29,15 @@ if test -n "$PKG_CONFIG_LIBDIR"; then
   PKG_CONFIG="env PKG_CONFIG_LIBDIR=$PKG_CONFIG_LIBDIR $PKG_CONFIG"
 fi
 
-BITCOIN_DAEMON_NAME=dashd
-BITCOIN_GUI_NAME=dash-qt
-BITCOIN_TEST_NAME=test_dash
-BITCOIN_CLI_NAME=dash-cli
-BITCOIN_TX_NAME=dash-tx
-BITCOIN_WALLET_TOOL_NAME=dash-wallet
+BITCOIN_DAEMON_NAME=nosord
+BITCOIN_GUI_NAME=nosor-qt
+BITCOIN_TEST_NAME=test_nosor
+BITCOIN_CLI_NAME=nosor-cli
+BITCOIN_TX_NAME=nosor-tx
+BITCOIN_WALLET_TOOL_NAME=nosor-wallet
 dnl Multi Process
-BITCOIN_MP_NODE_NAME=dash-node
-BITCOIN_MP_GUI_NAME=dash-gui
+BITCOIN_MP_NODE_NAME=nosor-node
+BITCOIN_MP_GUI_NAME=nosor-gui
 
 dnl Unless the user specified ARFLAGS, force it to be cr
 dnl This is also the default as-of libtool 2.4.7
@@ -1767,7 +1767,7 @@ AC_MSG_CHECKING([whether to build libraries])
 AM_CONDITIONAL([BUILD_BITCOIN_LIBS], [test $build_bitcoin_libs = "yes"])
 if test "$build_bitcoin_libs" = "yes"; then
   AC_DEFINE([HAVE_CONSENSUS_LIB], [1], [Define this symbol if the consensus lib has been built])
-  AC_CONFIG_FILES([libdashconsensus.pc:libdashconsensus.pc.in])
+  AC_CONFIG_FILES([libnosorconsensus.pc:libnosorconsensus.pc.in])
 fi
 AC_MSG_RESULT($build_bitcoin_libs)
 
