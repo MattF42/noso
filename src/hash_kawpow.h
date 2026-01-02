@@ -30,7 +30,7 @@ inline uint256 HashKAWPOW(const T1 pbegin, const T1 pend)
 
     SHA3_256()
         .Write({data, size})
-        .Finalize(result.begin());
+        .Finalize(result);
 
     return result;
 }
