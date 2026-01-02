@@ -20,7 +20,7 @@ QT_TRANSLATE_NOOP("dash-core", ""
 "%s is set very high! Fees this large could be paid on a single transaction."),
 QT_TRANSLATE_NOOP("dash-core", ""
 "%s request to listen on port %u. This port is considered \"bad\" and thus it "
-"is unlikely that any Dash Core peers connect to it. See doc/p2p-bad-ports.md "
+"is unlikely that any NOSOR Core peers connect to it. See doc/p2p-bad-ports.md "
 "for details and a full list."),
 QT_TRANSLATE_NOOP("dash-core", ""
 "%s uses exact denominated amounts to send funds, you might simply need to "
