@@ -1,45 +1,45 @@
-Dash Core staging tree
+NOSOR Core staging tree
 ===========================
 
 | `master` | `develop` |
 | -------- | --------- |
-| [![Build Status](https://github.com/dashpay/dash/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/dashpay/dash/tree/master) | [![Build Status](https://github.com/dashpay/dash/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/dashpay/dash/tree/develop) |
+| [![Build Status](https://github.com/MattF42/noso/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/MattF42/noso/tree/master) | [![Build Status](https://github.com/MattF42/noso/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/MattF42/noso/tree/develop) |
 
-https://www.dash.org
+https://www.github.com/MattF42/noso
 
-For an immediately usable, binary version of the Dash Core software, see
-https://www.dash.org/downloads/.
+For an immediately usable, binary version of the NOSOR Core software, see
+https://www.github.com/MattF42/noso/downloads/.
 
-Dash Core connects to the Dash peer-to-peer network to download and fully
+NOSOR Core connects to the NOSOR peer-to-peer network to download and fully
 validate blocks and transactions. It also includes a wallet and graphical user
 interface, which can be optionally built.
 
-Further information about Dash Core is available in the [doc folder](/doc).
+Further information about NOSOR Core is available in the [doc folder](/doc).
 
-What is Dash?
+What is NOSOR?
 -------------
 
-Dash is a digital currency that enables instant, private payments to anyone,
-anywhere in the world. Dash uses peer-to-peer technology to operate with
+NOSOR is a digital currency that enables instant, private payments to anyone,
+anywhere in the world. NOSOR uses peer-to-peer technology to operate with
 no central authority: managing transactions and issuing money are carried out
-collectively by the network. Dash Core is the name of the open
+collectively by the network. NOSOR Core is the name of the open
 source software which enables the use of this currency.
 
 
-For more information read the original Dash whitepaper.
+For more information read the original NOSOR whitepaper.
 
 License
 -------
 
-Dash Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
+NOSOR Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
 information or see https://opensource.org/licenses/MIT.
 
 Development Process
 -------------------
 
 The `master` branch is meant to be stable. Development is normally done in separate branches.
-[Tags](https://github.com/dashpay/dash/tags) are created to indicate new official,
-stable release versions of Dash Core.
+[Tags](https://github.com/MattF42/noso/tags) are created to indicate new official,
+stable release versions of NOSOR Core.
 
 The `develop` branch is regularly built (see doc/build-*.md for instructions) and tested, but is not guaranteed to be
 completely stable.
@@ -93,7 +93,7 @@ Translations
 ------------
 
 Changes to translations as well as new translations can be submitted to
-[Dash Core's Transifex page](https://explore.transifex.com/dash/dash/).
+[NOSOR Core's Transifex page](https://explore.transifex.com/dash/dash/).
 
 Translations are periodically pulled from Transifex and merged into the git repository. See the
 [translation process](doc/translation_process.md) for details on how this works.

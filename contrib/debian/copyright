@@ -1,14 +1,14 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: Dash Core
-Upstream-Contact: Dash Core Group, Inc https://www.dash.org/dcg/
+Upstream-Name: NOSOR Core
+Upstream-Contact: NOSOR Core Group, Inc https://www.dash.org/dcg/
 Source: https://github.com/dashpay/dash
 
 Files: *
 Copyright: 2009-2025, Bitcoin Core Developers,
-           2019-2025, Dash Core Developers
+           2019-2025, NOSOR Core Developers
 License: Expat
 Comment: The Bitcoin Core Developers encompasses all contributors to the
-         project, listed in the release notes or the git log. The Dash Core
+         project, listed in the release notes or the git log. The NOSOR Core
          Developers encompasses all contributors to the project, listed in the
          release notes or the git log.
 

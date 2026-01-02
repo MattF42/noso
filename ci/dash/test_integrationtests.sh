@@ -41,7 +41,7 @@ if [ "$SOCKETEVENTS" = "" ]; then
   fi
 fi
 echo "Using socketevents mode: $SOCKETEVENTS"
-EXTRA_ARGS="--dashd-arg=-socketevents=$SOCKETEVENTS"
+EXTRA_ARGS="--nosord-arg=-socketevents=$SOCKETEVENTS"
 
 set +e
 # shellcheck disable=SC2086
