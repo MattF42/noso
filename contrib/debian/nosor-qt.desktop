@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Name=NOSOR Core
+Comment=NOSOR P2P Cryptocurrency
+Comment[de]=Verbinde mit dem NOSOR peer-to-peer Netzwerk
+Comment[fr]=NOSOR, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=NOSOR, eşten eşe kriptografik sanal para birimi
+Exec=nosor-qt %u
+Terminal=false
+Type=Application
+Icon=dash128
+MimeType=x-scheme-handler/dash;
+Categories=Office;Finance;P2P;Network;Qt;
+StartupWMClass=NOSOR-qt

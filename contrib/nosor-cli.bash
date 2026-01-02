@@ -1,9 +1,9 @@
-# bash programmable completion for dash-cli(1)
+# bash programmable completion for nosor-cli(1)
 # Copyright (c) 2012-2019 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-# call $dash-cli for RPC
+# call $nosor-cli for RPC
 _dash_rpc() {
     # determine already specified args necessary for RPC
     local rpcargs=()
@@ -21,8 +21,8 @@ _dash_cli() {
     local cur prev words=() cword
     local dash_cli
 
-    # save and use original argument to invoke dash-cli for -help, help and RPC
-    # as dash-cli might not be in $PATH
+    # save and use original argument to invoke nosor-cli for -help, help and RPC
+    # as nosor-cli might not be in $PATH
     dash_cli="$1"
 
     COMPREPLY=()
@@ -130,7 +130,7 @@ _dash_cli() {
             ;;
     esac
 } &&
-complete -F _dash_cli dash-cli
+complete -F _dash_cli nosor-cli
 
 # Local variables:
 # mode: shell-script

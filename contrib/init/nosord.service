@@ -1,7 +1,7 @@
 # It is not recommended to modify this file in-place, because it will
 # be overwritten during package upgrades. If you want to add further
 # options or overwrite existing ones then use
-# $ systemctl edit dashd.service
+# $ systemctl edit nosord.service
 # See "man systemd.service" for details.
 
 # Note that almost all daemon options could be specified in
@@ -10,7 +10,7 @@
 # config file.
 
 [Unit]
-Description=Dash daemon
+Description=NOSOR daemon
 Documentation=https://github.com/dashpay/dash/blob/master/doc/init.md
 
 # https://www.freedesktop.org/wiki/Software/systemd/NetworkTarget/
@@ -18,9 +18,9 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/bin/dashd -pid=/run/dashd/dashd.pid \
+ExecStart=/usr/bin/nosord -pid=/run/nosord/nosord.pid \
                             -conf=/etc/dash/dash.conf \
-                            -datadir=/var/lib/dashd \
+                            -datadir=/var/lib/nosord \
                             -startupnotify='systemd-notify --ready' \
                             -shutdownnotify='systemd-notify --stopping'
 
@@ -33,7 +33,7 @@ ExecStartPre=/bin/chgrp dashcore /etc/dash
 
 Type=notify
 NotifyAccess=all
-PIDFile=/run/dashd/dashd.pid
+PIDFile=/run/nosord/nosord.pid
 
 Restart=on-failure
 TimeoutStartSec=infinity
@@ -46,16 +46,16 @@ TimeoutStopSec=600
 User=dashcore
 Group=dashcore
 
-# /run/dashd
-RuntimeDirectory=dashd
+# /run/nosord
+RuntimeDirectory=nosord
 RuntimeDirectoryMode=0710
 
 # /etc/dash
 ConfigurationDirectory=dash
 ConfigurationDirectoryMode=0710
 
-# /var/lib/dashd
-StateDirectory=dashd
+# /var/lib/nosord
+StateDirectory=nosord
 StateDirectoryMode=0710
 
 # Hardening measures
