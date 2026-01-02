@@ -2,6 +2,8 @@
 
 # Replace the HOST value below with the actual depends host dir you built (e.g. x86_64-pc-linux-gnu)
 # export CC=clang-22 CXX=clang++-22 
+make clean
+
 export CC=gcc-11
 export CXX=g++-11
 export HOST=x86_64-pc-linux-gnu
@@ -31,4 +33,5 @@ export LDFLAGS="-stdlib=libc++ $LDFLAGS"
 ./configure --prefix="$DEPENDS_DIR"
 
 # Build using all CPU cores
-make -j"$(nproc)"
+# make -j"$(nproc)"
+make -j 8
