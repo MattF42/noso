@@ -188,7 +188,9 @@ BITCOIN_CORE_H = \
   compat/endian.h \
   compressor.h \
   context.h \
+  consensus/coinbase_checks.h \
   consensus/consensus.h \
+  consensus/subsidy.h \
   consensus/tx_check.h \
   consensus/tx_verify.h \
   core_io.h \
@@ -859,9 +861,13 @@ libbitcoin_consensus_a_SOURCES = \
   bls/bls.cpp \
   bls/bls.h \
   consensus/amount.h \
+  consensus/coinbase_checks.cpp \
+  consensus/coinbase_checks.h \
   consensus/merkle.cpp \
   consensus/merkle.h \
   consensus/params.h \
+  consensus/subsidy.cpp \
+  consensus/subsidy.h \
   consensus/tx_check.cpp \
   consensus/validation.h \
   hash.cpp \
@@ -905,6 +911,8 @@ libbitcoin_common_a_SOURCES = \
   common/bloom.cpp \
   common/run_command.cpp \
   compressor.cpp \
+  consensus/coinbase_checks.cpp \
+  consensus/subsidy.cpp \
   core_read.cpp \
   core_write.cpp \
   deploymentinfo.cpp \

@@ -1,0 +1,10 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: NOSOR Core consensus library
+Description: Library for the NOSOR consensus protocol.
+Version: 23.0.2
+Libs: -L${libdir} -lnosorconsensus
+Cflags: -I${includedir}
