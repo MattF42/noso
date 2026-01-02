@@ -10,8 +10,8 @@ export LC_ALL=C.UTF-8
 if [ "$CI_OS_NAME" == "macos" ]; then
   echo > "${HOME}/Library/Application Support/DashCore"
 else
-  CI_EXEC echo \> \$HOME/.dashcore
-  CI_EXEC_ROOT echo \> \$HOME/.dashcore
+  CI_EXEC echo \> \$HOME/.nosorcore
+  CI_EXEC_ROOT echo \> \$HOME/.nosorcore
 fi
 
 CI_EXEC mkdir -p "${DEPENDS_DIR}/SDKs" "${DEPENDS_DIR}/sdk-sources"

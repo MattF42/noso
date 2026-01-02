@@ -2,7 +2,7 @@
 # Copyright (c) 2017-2020 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
-"""Test dash-cli"""
+"""Test nosor-cli"""
 
 from decimal import Decimal
 import re
@@ -79,7 +79,7 @@ class TestBitcoinCli(BitcoinTestFramework):
         """Main test logic"""
         self.generate(self.nodes[0], BLOCKS)
 
-        self.log.info("Compare responses from getblockchaininfo RPC and `dash-cli getblockchaininfo`")
+        self.log.info("Compare responses from getblockchaininfo RPC and `nosor-cli getblockchaininfo`")
         cli_response = self.nodes[0].cli.getblockchaininfo()
         rpc_response = self.nodes[0].getblockchaininfo()
         assert_equal(cli_response, rpc_response)
@@ -140,7 +140,7 @@ class TestBitcoinCli(BitcoinTestFramework):
         assert_equal(Decimal(cli_get_info['Difficulty']), blockchain_info['difficulty'])
         assert_equal(cli_get_info['Chain'], blockchain_info['chain'])
 
-        self.log.info("Test -getinfo and dash-cli return all proxies")
+        self.log.info("Test -getinfo and nosor-cli return all proxies")
         self.restart_node(0, extra_args=["-proxy=127.0.0.1:9050", "-i2psam=127.0.0.1:7656"])
         network_info = self.nodes[0].getnetworkinfo()
         cli_get_info_string = self.nodes[0].cli('-getinfo').send_cli()
@@ -148,7 +148,7 @@ class TestBitcoinCli(BitcoinTestFramework):
         assert_equal(cli_get_info["Proxies"], "127.0.0.1:9050 (ipv4, ipv6, onion, cjdns), 127.0.0.1:7656 (i2p)")
 
         if self.is_specified_wallet_compiled():
-            self.log.info("Test -getinfo and dash-cli getwalletinfo return expected wallet info")
+            self.log.info("Test -getinfo and nosor-cli getwalletinfo return expected wallet info")
             # Explicitely set the output type in order to have constintent tx vsize / fees
             # for both legacy and descriptor wallets (disables the change address type detection algorithm)
             self.restart_node(0, extra_args=[])

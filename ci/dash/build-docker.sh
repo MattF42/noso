@@ -9,7 +9,7 @@ export LC_ALL=C
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"/../.. || exit
 
-DOCKER_IMAGE=${DOCKER_IMAGE:-dashpay/dashd-develop}
+DOCKER_IMAGE=${DOCKER_IMAGE:-dashpay/nosord-develop}
 DOCKER_TAG=${DOCKER_TAG:-latest}
 DOCKER_RELATIVE_PATH=contrib/containers/deploy
 
@@ -18,11 +18,11 @@ if [ -d $DOCKER_RELATIVE_PATH/bin ]; then
 fi
 
 mkdir $DOCKER_RELATIVE_PATH/bin
-cp "$BASE_ROOT_DIR"/src/dashd    $DOCKER_RELATIVE_PATH/bin/
-cp "$BASE_ROOT_DIR"/src/dash-cli $DOCKER_RELATIVE_PATH/bin/
-cp "$BASE_ROOT_DIR"/src/dash-tx  $DOCKER_RELATIVE_PATH/bin/
-strip $DOCKER_RELATIVE_PATH/bin/dashd
-strip $DOCKER_RELATIVE_PATH/bin/dash-cli
-strip $DOCKER_RELATIVE_PATH/bin/dash-tx
+cp "$BASE_ROOT_DIR"/src/nosord    $DOCKER_RELATIVE_PATH/bin/
+cp "$BASE_ROOT_DIR"/src/nosor-cli $DOCKER_RELATIVE_PATH/bin/
+cp "$BASE_ROOT_DIR"/src/nosor-tx  $DOCKER_RELATIVE_PATH/bin/
+strip $DOCKER_RELATIVE_PATH/bin/nosord
+strip $DOCKER_RELATIVE_PATH/bin/nosor-cli
+strip $DOCKER_RELATIVE_PATH/bin/nosor-tx
 
 docker build --pull -t "$DOCKER_IMAGE":"$DOCKER_TAG" -f $DOCKER_RELATIVE_PATH/Dockerfile docker
