@@ -160,7 +160,7 @@ class CMainParams : public CChainParams {
 public:
     CMainParams() {
         strNetworkID = CBaseChainParams::MAIN;
-        consensus.nSubsidyHalvingInterval = 210240; // Note: actual number of blocks per calendar year with DGW v3 is ~200700 (for example 449750 - 249050)
+        consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks
         consensus.nMasternodePaymentsStartBlock = 100000; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 158000; // actual historical value
         consensus.nMasternodePaymentsIncreasePeriod = 576*30; // 17280 - actual historical value
@@ -322,7 +322,7 @@ class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = CBaseChainParams::TESTNET;
-        consensus.nSubsidyHalvingInterval = 210240;
+        consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks
         consensus.nMasternodePaymentsStartBlock = 4010; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 4030;
         consensus.nMasternodePaymentsIncreasePeriod = 10;
@@ -398,9 +398,9 @@ public:
         m_assumed_blockchain_size = 10;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1390666206UL, 1512266, 0x1e0ffff0, 1, 9'000'000 * COIN);
+        genesis = CreateGenesisBlock(1390666206, 3462550, 0x1e0ffff0, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x000004a01838f5f8381644e4c5c584e61683fd6fec6f61ae3109a23397cacb7a"));
+        assert(consensus.hashGenesisBlock == uint256S("0x00000171a41413144826a22b03ac9c4c589af3b2a80d77c1294c7778499f888b"));
         assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
 
         vFixedSeeds.clear();
@@ -478,7 +478,7 @@ class CDevNetParams : public CChainParams {
 public:
     explicit CDevNetParams(const ArgsManager& args) {
         strNetworkID = CBaseChainParams::DEVNET;
-        consensus.nSubsidyHalvingInterval = 210240;
+        consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks
         consensus.nMasternodePaymentsStartBlock = 4010; // not true, but it's ok as long as it's less then nMasternodePaymentsIncreaseBlock
         consensus.nMasternodePaymentsIncreaseBlock = 4030;
         consensus.nMasternodePaymentsIncreasePeriod = 10;
@@ -556,9 +556,7 @@ public:
         UpdateDevnetSubsidyAndDiffParametersFromArgs(args);
         genesis = CreateGenesisBlock(1417713337, 0, 0x207fffff, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x0b9d04a6eda8f50f729ec8a4f45cc9806d6aa0e94a70f0d79d6b938547578689"));
-        assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
-        assert(consensus.hashGenesisBlock == uint256S("0x0b9d04a6eda8f50f729ec8a4f45cc9806d6aa0e94a70f0d79d6b938547578689"));
+        assert(consensus.hashGenesisBlock == uint256S("0x1910ed0a59abddc238e91f51e2c5e02759b045ccc7bda662a16c9455c3a11386"));
         assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
 
         devnetGenesis = FindDevNetGenesisBlock(genesis, 9'000'000 * COIN);
@@ -714,7 +712,7 @@ class CRegTestParams : public CChainParams {
 public:
     explicit CRegTestParams(const ArgsManager& args) {
         strNetworkID =  CBaseChainParams::REGTEST;
-        consensus.nSubsidyHalvingInterval = 150;
+        consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks (use same as mainnet for consistency)
         consensus.nMasternodePaymentsStartBlock = 240;
         consensus.nMasternodePaymentsIncreaseBlock = 350;
         consensus.nMasternodePaymentsIncreasePeriod = 10;
@@ -798,6 +796,8 @@ public:
 
         genesis = CreateGenesisBlock(1417713337, 0, 0x207fffff, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
+        assert(consensus.hashGenesisBlock == uint256S("0x1910ed0a59abddc238e91f51e2c5e02759b045ccc7bda662a16c9455c3a11386"));
+        assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();
