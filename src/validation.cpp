@@ -2378,6 +2378,32 @@ bool CChainState::ConnectBlock(const CBlock& block, BlockValidationState& state,
     // before the first had been spent.  Since those coinbases are sufficiently buried it's no longer possible to create further
     // duplicate transactions descending from the known pairs either.
     // If we're on the known chain at height greater than where BIP34 activated, we can save the db accesses needed for the BIP30 check.
+
+   if (pindex->pprev == nullptr) {
+        // Special-case genesis block:
+        // - Validate the block normally up to the point where ConnectBlock would normally
+        //   apply transactions to the UTXO set.
+        // - Apply coinbase outputs into view without relying on pindex->pprev or undo data.
+        //
+        // This keeps genesis outputs in chainstate and avoids dereferencing pprev.
+	int nHeight = pindex->nHeight;
+        // UpdateCoins requires a CTxUndo reference even if we don't persist undo for genesis.
+        CTxUndo undoDummy;
+        for (const CTransactionRef& tx : block.vtx) {
+            // Apply outputs into the UTXO set at height 0 using a dummy undo.
+            UpdateCoins(*tx, view, undoDummy, nHeight);
+        }
+        // Flush changes to disk (keep consistent view)
+        if (!view.Flush()) {
+            return state.Error("ConnectBlock: failed to flush chainstate for genesis");
+        }
+
+        // We've applied genesis coinbase outputs to the UTXO set; nothing more to do here.
+        return true;
+    } 
+
+
+
     assert(pindex->pprev);
     CBlockIndex* pindexBIP34height = pindex->pprev->GetAncestor(m_params.GetConsensus().BIP34Height);
     //Only continue to enforce if we're below BIP34 activation height or the block hash at that height doesn't correspond.

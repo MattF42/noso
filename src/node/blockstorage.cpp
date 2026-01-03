@@ -518,6 +518,13 @@ bool UndoReadFromDisk(CBlockUndo& blockundo, const CBlockIndex* pindex)
     const FlatFilePos pos{WITH_LOCK(::cs_main, return pindex->GetUndoPos())};
 
     if (pos.IsNull()) {
+        // If this is the genesis block, treat missing undo data as an empty undo
+        // rather than an error. This allows callers to request undo for block 0
+        // without failing when no undo file exists (genesis has no prior outputs).
+        if (pindex != nullptr && pindex->nHeight == 0) {
+            blockundo.vtxundo.clear();
+            return true;
+        }
         return error("%s: no undo data available", __func__);
     }
 
@@ -531,7 +538,9 @@ bool UndoReadFromDisk(CBlockUndo& blockundo, const CBlockIndex* pindex)
     uint256 hashChecksum;
     CHashVerifier<CAutoFile> verifier(&filein); // We need a CHashVerifier as reserializing may lose data
     try {
-        verifier << pindex->pprev->GetBlockHash();
+        // pindex->pprev may be null for the genesis block; use a zero hash in that case.
+        const uint256 prevBlockHash = pindex && pindex->pprev ? pindex->pprev->GetBlockHash() : uint256();
+        verifier << prevBlockHash;
         verifier >> blockundo;
         filein >> hashChecksum;
     } catch (const std::exception& e) {
@@ -724,7 +733,9 @@ bool BlockManager::WriteUndoDataForBlock(const CBlockUndo& blockundo, BlockValid
         if (!FindUndoPos(state, pindex->nFile, _pos, ::GetSerializeSize(blockundo, CLIENT_VERSION) + 40)) {
             return error("ConnectBlock(): FindUndoPos failed");
         }
-        if (!UndoWriteToDisk(blockundo, _pos, pindex->pprev->GetBlockHash(), chainparams.MessageStart())) {
+     // pindex->pprev may be null for genesis; write the prev-hash as zero in that case
+        const uint256 prevBlockHash = pindex && pindex->pprev ? pindex->pprev->GetBlockHash() : uint256();
+        if (!UndoWriteToDisk(blockundo, _pos, prevBlockHash, chainparams.MessageStart())) {
             return AbortNode(state, "Failed to write undo data");
         }
         // rev files are written in block height order, whereas blk files are written as blocks come in (often out of order)
