@@ -797,10 +797,11 @@ public:
         UpdateDIP3ParametersFromArgs(args);
         UpdateBudgetParametersFromArgs(args);
 
-	genesis = CreateGenesisBlock(1767229261, 1, 0x207fffff, 1, 9000000LL * COIN);
+        
+	genesis = CreateGenesisBlock(1767229261, 0, 0x207fffff, 1, 9000000LL * COIN);
 	consensus.hashGenesisBlock = genesis.GetHash();
-	assert(consensus.hashGenesisBlock == uint256S("0x5cd85f0819b3f1cc80f0dfb9d2da652f8ad1f527d3785f24e93b07153982e2c2"));
-	assert(genesis.hashMerkleRoot == uint256S("0x96ecf82f38e933c4708db681a16190ccbff70592ec8e84229acc45839f506b21"));
+	assert(consensus.hashGenesisBlock == uint256S("0x400afe106441c92d1bc41e5531170fc290621f43c4989fffbb644869d2524ec1"));
+	assert(genesis.hashMerkleRoot == uint256S("0x55bd75ba97a68ff394739eb56fd0c6f55cd6ec4b037f90a831e3cf95f6c11b24"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();

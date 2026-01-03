@@ -55,8 +55,9 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
 
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
-    const char* pszTimestamp = "Wired 09/Jan/2014 The Grand Experiment Goes Live: Overstock.com Is Now Accepting Bitcoins";
-    // P2WPKH output script for genesis premine
+    // Must match the coinbase timestamp used in src/chainparams.cpp
+    const char* pszTimestamp = "NOSOR is NOSO-Rebirth Jan 2026";
+    // P2WPKH output script for genesis premine (same as chainparams)
     const std::vector<unsigned char> genesisOutputBytes = ParseHex("0014697cd07c801b8bba094f759de4fe742a6bae0470");
     const CScript genesisOutputScript(genesisOutputBytes.begin(), genesisOutputBytes.end());
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
