@@ -12,6 +12,7 @@
 #include <deploymentinfo.h>
 #include <llmq/params.h>
 #include <util/ranges.h>
+#include <util/strencodings.h>
 #include <util/system.h>
 #include <util/underlying.h>
 #include <versionbits.h>
@@ -70,6 +71,10 @@ static CBlock CreateDevNetGenesisBlock(const uint256 &prevBlockHash, const std::
  * transaction cannot be spent since it did not originally exist in the
  * database.
  *
+ * Genesis premine output script:
+ * P2WPKH: 0014697cd07c801b8bba094f759de4fe742a6bae0470
+ * (Alternative legacy P2PKH: 76a914697cd07c801b8bba094f759de4fe742a6bae047088ac)
+ *
  * CBlock(hash=00000ffd590b14, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=e0028e, nTime=1390095618, nBits=1e0ffff0, nNonce=28917698, vtx=1)
  *   CTransaction(hash=e0028e, ver=1, vin.size=1, vout.size=1, nLockTime=0)
  *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d01044c5957697265642030392f4a616e2f3230313420546865204772616e64204578706572696d656e7420476f6573204c6976653a204f76657273746f636b2e636f6d204973204e6f7720416363657074696e6720426974636f696e73)
@@ -79,7 +84,9 @@ static CBlock CreateDevNetGenesisBlock(const uint256 &prevBlockHash, const std::
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
     const char* pszTimestamp = "Wired 09/Jan/2014 The Grand Experiment Goes Live: Overstock.com Is Now Accepting Bitcoins";
-    const CScript genesisOutputScript = CScript() << ParseHex("040184710fa689ad5023690c80f3a49c8f13f8d45b8c857fbcbc8bc4a8e4d3eb4b10f4d4604fa08dce601aaf0f470216fe1b51850b4acf21b179c45070ac7b03a9") << OP_CHECKSIG;
+    // P2WPKH output script for genesis premine
+    const std::vector<unsigned char> genesisOutputBytes = ParseHex("0014697cd07c801b8bba094f759de4fe742a6bae0470");
+    const CScript genesisOutputScript(genesisOutputBytes.begin(), genesisOutputBytes.end());
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
 
