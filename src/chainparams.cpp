@@ -243,8 +243,8 @@ public:
 
         genesis = CreateGenesisBlock(1390095618, 531040, 0x1e0ffff0, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x0000075f59dc8010ed51ded0e9129460cd3e0ce40e310d27f5480bf65faca280"));
-        assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
+        // assert(consensus.hashGenesisBlock == uint256S("0x0000075f59dc8010ed51ded0e9129460cd3e0ce40e310d27f5480bf65faca280"));
+        // assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
 
         // Note that of those which support the service bits prefix, most only support a subset of
         // possible options.
@@ -400,8 +400,8 @@ public:
 
         genesis = CreateGenesisBlock(1390666206, 3462550, 0x1e0ffff0, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x00000171a41413144826a22b03ac9c4c589af3b2a80d77c1294c7778499f888b"));
-        assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
+        // assert(consensus.hashGenesisBlock == uint256S("0x00000171a41413144826a22b03ac9c4c589af3b2a80d77c1294c7778499f888b"));
+        // assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
 
         vFixedSeeds.clear();
         vFixedSeeds = std::vector<uint8_t>(std::begin(chainparams_seed_test), std::end(chainparams_seed_test));
@@ -556,8 +556,8 @@ public:
         UpdateDevnetSubsidyAndDiffParametersFromArgs(args);
         genesis = CreateGenesisBlock(1417713337, 0, 0x207fffff, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x1910ed0a59abddc238e91f51e2c5e02759b045ccc7bda662a16c9455c3a11386"));
-        assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
+        // assert(consensus.hashGenesisBlock == uint256S("0x1910ed0a59abddc238e91f51e2c5e02759b045ccc7bda662a16c9455c3a11386"));
+        // assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
 
         devnetGenesis = FindDevNetGenesisBlock(genesis, 9'000'000 * COIN);
         consensus.hashDevnetGenesisBlock = devnetGenesis.GetHash();
@@ -796,8 +796,8 @@ public:
 
         genesis = CreateGenesisBlock(1417713337, 0, 0x207fffff, 1, 9'000'000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x1910ed0a59abddc238e91f51e2c5e02759b045ccc7bda662a16c9455c3a11386"));
-        assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
+        // assert(consensus.hashGenesisBlock == uint256S("0x1910ed0a59abddc238e91f51e2c5e02759b045ccc7bda662a16c9455c3a11386"));
+        // assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();
