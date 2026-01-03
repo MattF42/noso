@@ -143,6 +143,9 @@ if BUILD_BITCOIN_WALLET
 endif
 endif
 
+# Genesis mining tool
+bin_PROGRAMS += mine_genesis
+
 .PHONY: FORCE check-symbols check-security
 # dash core #
 BITCOIN_CORE_H = \
@@ -1123,6 +1126,24 @@ nosor_wallet_LDADD = \
 if TARGET_WINDOWS
 nosor_wallet_SOURCES += nosor-wallet-res.rc
 endif
+#
+
+# mine_genesis binary #
+mine_genesis_SOURCES = tools/mine_genesis.cpp
+mine_genesis_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+mine_genesis_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+mine_genesis_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+
+mine_genesis_LDADD = \
+  $(LIBBITCOIN_COMMON) \
+  $(LIBBITCOIN_UTIL) \
+  $(LIBBITCOIN_CONSENSUS) \
+  $(LIBBITCOIN_CRYPTO) \
+  $(LIBUNIVALUE) \
+  $(LIBDASHBLS) \
+  $(LIBSECP256K1)
+
+mine_genesis_LDADD += $(BACKTRACE_LIBS) $(GMP_LIBS)
 #
 
 # nosorconsensus library #
