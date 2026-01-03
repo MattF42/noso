@@ -68,12 +68,10 @@ static CBlock CreateDevNetGenesisBlock(const uint256 &prevBlockHash, const std::
 
 /**
  * Build the genesis block. Note that the output of its generation
- * transaction cannot be spent since it did not originally exist in the
- * database.
+ * transaction is now treated as a normal spendable coinbase output.
  *
  * Genesis premine output script:
- * P2WPKH: 0014697cd07c801b8bba094f759de4fe742a6bae0470
- * (Alternative legacy P2PKH: 76a914697cd07c801b8bba094f759de4fe742a6bae047088ac)
+ * P2PKH: 76a914697cd07c801b8bba094f759de4fe742a6bae047088ac
  *
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)

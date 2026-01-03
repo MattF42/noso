@@ -118,7 +118,7 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)
     const CAmount block_subsidy{GetBlockSubsidy(pindex, Params().GetConsensus())};
     m_total_subsidy += block_subsidy;
 
-    // Ignore genesis block
+    // Process genesis block and all other blocks
     if (pindex->nHeight > 0) {
         if (!UndoReadFromDisk(block_undo, pindex)) {
             return false;
@@ -139,65 +139,64 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)
                              __func__, expected_block_hash.ToString());
             }
         }
+    } else {
+        // Genesis block: no undo data or previous state to load
+        // Initialize with empty state (member variables already at default values)
+    }
 
-        // Add the new utxos created from the block
-        for (size_t i = 0; i < block.vtx.size(); ++i) {
-            const auto& tx{block.vtx.at(i)};
+    // Add the new utxos created from the block
+    for (size_t i = 0; i < block.vtx.size(); ++i) {
+        const auto& tx{block.vtx.at(i)};
 
-            // Skip duplicate txid coinbase transactions (BIP30).
-            if (IsBIP30Unspendable(*pindex) && tx->IsCoinBase()) {
-                m_total_unspendable_amount += block_subsidy;
-                m_total_unspendables_bip30 += block_subsidy;
+        // Skip duplicate txid coinbase transactions (BIP30).
+        if (IsBIP30Unspendable(*pindex) && tx->IsCoinBase()) {
+            m_total_unspendable_amount += block_subsidy;
+            m_total_unspendables_bip30 += block_subsidy;
+            continue;
+        }
+
+        for (uint32_t j = 0; j < tx->vout.size(); ++j) {
+            const CTxOut& out{tx->vout[j]};
+            Coin coin{out, pindex->nHeight, tx->IsCoinBase()};
+            COutPoint outpoint{tx->GetHash(), j};
+
+            // Skip unspendable coins
+            if (coin.out.scriptPubKey.IsUnspendable()) {
+                m_total_unspendable_amount += coin.out.nValue;
+                m_total_unspendables_scripts += coin.out.nValue;
                 continue;
             }
 
-            for (uint32_t j = 0; j < tx->vout.size(); ++j) {
-                const CTxOut& out{tx->vout[j]};
-                Coin coin{out, pindex->nHeight, tx->IsCoinBase()};
-                COutPoint outpoint{tx->GetHash(), j};
+            m_muhash.Insert(MakeUCharSpan(TxOutSer(outpoint, coin)));
 
-                // Skip unspendable coins
-                if (coin.out.scriptPubKey.IsUnspendable()) {
-                    m_total_unspendable_amount += coin.out.nValue;
-                    m_total_unspendables_scripts += coin.out.nValue;
-                    continue;
-                }
-
-                m_muhash.Insert(MakeUCharSpan(TxOutSer(outpoint, coin)));
-
-                if (tx->IsCoinBase()) {
-                    m_total_coinbase_amount += coin.out.nValue;
-                } else {
-                    m_total_new_outputs_ex_coinbase_amount += coin.out.nValue;
-                }
-
-                ++m_transaction_output_count;
-                m_total_amount += coin.out.nValue;
-                m_bogo_size += GetBogoSize(coin.out.scriptPubKey);
+            if (tx->IsCoinBase()) {
+                m_total_coinbase_amount += coin.out.nValue;
+            } else {
+                m_total_new_outputs_ex_coinbase_amount += coin.out.nValue;
             }
 
-            // The coinbase tx has no undo data since no former output is spent
-            if (!tx->IsCoinBase()) {
-                const auto& tx_undo{block_undo.vtxundo.at(i - 1)};
+            ++m_transaction_output_count;
+            m_total_amount += coin.out.nValue;
+            m_bogo_size += GetBogoSize(coin.out.scriptPubKey);
+        }
 
-                for (size_t j = 0; j < tx_undo.vprevout.size(); ++j) {
-                    Coin coin{tx_undo.vprevout[j]};
-                    COutPoint outpoint{tx->vin[j].prevout.hash, tx->vin[j].prevout.n};
+        // The coinbase tx has no undo data since no former output is spent
+        if (!tx->IsCoinBase()) {
+            const auto& tx_undo{block_undo.vtxundo.at(i - 1)};
 
-                    m_muhash.Remove(MakeUCharSpan(TxOutSer(outpoint, coin)));
+            for (size_t j = 0; j < tx_undo.vprevout.size(); ++j) {
+                Coin coin{tx_undo.vprevout[j]};
+                COutPoint outpoint{tx->vin[j].prevout.hash, tx->vin[j].prevout.n};
 
-                    m_total_prevout_spent_amount += coin.out.nValue;
+                m_muhash.Remove(MakeUCharSpan(TxOutSer(outpoint, coin)));
 
-                    --m_transaction_output_count;
-                    m_total_amount -= coin.out.nValue;
-                    m_bogo_size -= GetBogoSize(coin.out.scriptPubKey);
-                }
+                m_total_prevout_spent_amount += coin.out.nValue;
+
+                --m_transaction_output_count;
+                m_total_amount -= coin.out.nValue;
+                m_bogo_size -= GetBogoSize(coin.out.scriptPubKey);
             }
         }
-    } else {
-        // genesis block
-        m_total_unspendable_amount += block_subsidy;
-        m_total_unspendables_genesis_block += block_subsidy;
     }
 
     // If spent prevouts + block subsidy are still a higher amount than

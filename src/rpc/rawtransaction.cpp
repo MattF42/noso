@@ -277,11 +277,6 @@ static RPCHelpMan getrawtransaction()
     uint256 hash = ParseHashV(request.params[0], "parameter 1");
     const CBlockIndex* blockindex = nullptr;
 
-    if (hash == Params().GenesisBlock().hashMerkleRoot) {
-        // Special exception for the genesis block coinbase transaction
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "The genesis block coinbase is not considered an ordinary transaction and cannot be retrieved");
-    }
-
     // Accept either a bool (true) or a num (>=1) to indicate verbose output.
     bool fVerbose = false;
     if (!request.params[1].isNull()) {
@@ -566,10 +561,6 @@ static RPCHelpMan gettxchainlocks()
     for (const auto idx : irange::range(txids.size())) {
         UniValue result(UniValue::VOBJ);
         const uint256 txid(ParseHashV(txids[idx], "txid"));
-        if (txid == Params().GenesisBlock().hashMerkleRoot) {
-            // Special exception for the genesis block coinbase transaction
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "The genesis block coinbase is not considered an ordinary transaction and cannot be retrieved");
-        }
 
         uint256 hash_block;
         int height{-1};
