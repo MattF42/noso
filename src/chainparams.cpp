@@ -75,16 +75,12 @@ static CBlock CreateDevNetGenesisBlock(const uint256 &prevBlockHash, const std::
  * P2WPKH: 0014697cd07c801b8bba094f759de4fe742a6bae0470
  * (Alternative legacy P2PKH: 76a914697cd07c801b8bba094f759de4fe742a6bae047088ac)
  *
- * CBlock(hash=00000ffd590b14, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=e0028e, nTime=1390095618, nBits=1e0ffff0, nNonce=28917698, vtx=1)
- *   CTransaction(hash=e0028e, ver=1, vin.size=1, vout.size=1, nLockTime=0)
- *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d01044c5957697265642030392f4a616e2f3230313420546865204772616e64204578706572696d656e7420476f6573204c6976653a204f76657273746f636b2e636f6d204973204e6f7720416363657074696e6720426974636f696e73)
- *     CTxOut(nValue=50.00000000, scriptPubKey=0xA9037BAC7050C479B121CF)
- *   vMerkleTree: e0028e
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
-    const char* pszTimestamp = "Wired 09/Jan/2014 The Grand Experiment Goes Live: Overstock.com Is Now Accepting Bitcoins";
-    // P2WPKH output script for genesis premine
+    // New genesis coinbase message
+    const char* pszTimestamp = "NOSOR is NOSO-Rebirth Jan 2026";
+    // P2WPKH output script for genesis premine (unchanged)
     const std::vector<unsigned char> genesisOutputBytes = ParseHex("0014697cd07c801b8bba094f759de4fe742a6bae0470");
     const CScript genesisOutputScript(genesisOutputBytes.begin(), genesisOutputBytes.end());
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
@@ -248,7 +244,7 @@ public:
         m_assumed_blockchain_size = 54;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1390095618, 531040, 0x1e0ffff0, 1, 9'000'000 * COIN);
+        genesis = CreateGenesisBlock(1390095618, 531040, 0x1e0ffff0, 1, 9000000LL * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
         // assert(consensus.hashGenesisBlock == uint256S("0x0000075f59dc8010ed51ded0e9129460cd3e0ce40e310d27f5480bf65faca280"));
         // assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
@@ -405,7 +401,7 @@ public:
         m_assumed_blockchain_size = 10;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1390666206, 3462550, 0x1e0ffff0, 1, 9'000'000 * COIN);
+        genesis = CreateGenesisBlock(1390666206, 3462550, 0x1e0ffff0, 1, 9000000LL * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
         // assert(consensus.hashGenesisBlock == uint256S("0x00000171a41413144826a22b03ac9c4c589af3b2a80d77c1294c7778499f888b"));
         // assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
@@ -561,12 +557,12 @@ public:
         m_assumed_chain_state_size = 0;
 
         UpdateDevnetSubsidyAndDiffParametersFromArgs(args);
-        genesis = CreateGenesisBlock(1417713337, 0, 0x207fffff, 1, 9'000'000 * COIN);
-        consensus.hashGenesisBlock = genesis.GetHash();
-        // assert(consensus.hashGenesisBlock == uint256S("0x1910ed0a59abddc238e91f51e2c5e02759b045ccc7bda662a16c9455c3a11386"));
-        // assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
+        genesis = CreateGenesisBlock(1767229261, 5, 0x207fffff, 1, 9000000LL * COIN);
+	consensus.hashGenesisBlock = genesis.GetHash();
+	// assert(consensus.hashGenesisBlock == uint256S("0x31525dcbfa6ebceba1293b99ef71f10eab6dd8762f60bb24296fef682d6ed8e7"));
+	// assert(genesis.hashMerkleRoot == uint256S("0x96ecf82f38e933c4708db681a16190ccbff70592ec8e84229acc45839f506b21"));
 
-        devnetGenesis = FindDevNetGenesisBlock(genesis, 9'000'000 * COIN);
+        devnetGenesis = FindDevNetGenesisBlock(genesis, 9000000LL * COIN);
         consensus.hashDevnetGenesisBlock = devnetGenesis.GetHash();
 
         vFixedSeeds.clear();
@@ -801,10 +797,10 @@ public:
         UpdateDIP3ParametersFromArgs(args);
         UpdateBudgetParametersFromArgs(args);
 
-        genesis = CreateGenesisBlock(1417713337, 0, 0x207fffff, 1, 9'000'000 * COIN);
-        consensus.hashGenesisBlock = genesis.GetHash();
-        // assert(consensus.hashGenesisBlock == uint256S("0x1910ed0a59abddc238e91f51e2c5e02759b045ccc7bda662a16c9455c3a11386"));
-        // assert(genesis.hashMerkleRoot == uint256S("0xf7ae7bdcbf014b839b1966d577100e54604827f42d1fd8ea47ba15b9057201df"));
+	genesis = CreateGenesisBlock(1767229261, 1, 0x207fffff, 1, 9000000LL * COIN);
+	consensus.hashGenesisBlock = genesis.GetHash();
+	assert(consensus.hashGenesisBlock == uint256S("0x5cd85f0819b3f1cc80f0dfb9d2da652f8ad1f527d3785f24e93b07153982e2c2"));
+	assert(genesis.hashMerkleRoot == uint256S("0x96ecf82f38e933c4708db681a16190ccbff70592ec8e84229acc45839f506b21"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();

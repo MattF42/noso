@@ -20,10 +20,10 @@ export LDFLAGS="-L$DEPENDS_DIR/lib $LDFLAGS"
 # Useful at runtime for loading shared libs from depends
 export LD_LIBRARY_PATH="$DEPENDS_DIR/lib:$LD_LIBRARY_PATH"
 
-export CC=clang-22
-export CXX=clang++-22
-export CXXFLAGS="-stdlib=libc++ -std=c++20 $CXXFLAGS"
-export LDFLAGS="-stdlib=libc++ $LDFLAGS"
+# export CC=clang-22
+# export CXX=clang++-22
+# export CXXFLAGS="-stdlib=libc++ -std=c++20 $CXXFLAGS"
+# export LDFLAGS="-stdlib=libc++ $LDFLAGS"
 
 
 # Generate configure script if needed
@@ -34,4 +34,4 @@ export LDFLAGS="-stdlib=libc++ $LDFLAGS"
 
 # Build using all CPU cores
 # make -j"$(nproc)"
-make -j 8
+make -j 16

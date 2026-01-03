@@ -71,13 +71,13 @@ void MineGenesis(const std::string& network)
 
     // Set parameters based on network
     if (network == "regtest") {
-        nTime = 1417713337;
+        nTime = 1767229261;
         nBits = 0x207fffff;
     } else if (network == "testnet") {
-        nTime = 1390666206;
+        nTime = 1767229261;
         nBits = 0x1e0ffff0;
     } else if (network == "mainnet") {
-        nTime = 1390095618;
+        nTime = 1767229261;
         nBits = 0x1e0ffff0;
     } else {
         std::cerr << "Error: Unknown network '" << network << "'\n";
