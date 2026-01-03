@@ -81,7 +81,7 @@ static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits
     // New genesis coinbase message
     const char* pszTimestamp = "NOSOR is NOSO-Rebirth Jan 2026";
     // P2WPKH output script for genesis premine (unchanged)
-    const std::vector<unsigned char> genesisOutputBytes = ParseHex("0014697cd07c801b8bba094f759de4fe742a6bae0470");
+    const std::vector<unsigned char> genesisOutputBytes = ParseHex("76a914697cd07c801b8bba094f759de4fe742a6bae047088ac");
     const CScript genesisOutputScript(genesisOutputBytes.begin(), genesisOutputBytes.end());
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
@@ -798,10 +798,12 @@ public:
         UpdateBudgetParametersFromArgs(args);
 
         
-	genesis = CreateGenesisBlock(1767229261, 0, 0x207fffff, 1, 9000000LL * COIN);
-	consensus.hashGenesisBlock = genesis.GetHash();
-	assert(consensus.hashGenesisBlock == uint256S("0x400afe106441c92d1bc41e5531170fc290621f43c4989fffbb644869d2524ec1"));
-	assert(genesis.hashMerkleRoot == uint256S("0x55bd75ba97a68ff394739eb56fd0c6f55cd6ec4b037f90a831e3cf95f6c11b24"));
+        genesis = CreateGenesisBlock(1767229261, 0, 0x207fffff, 1, 9000000LL * COIN);
+        consensus.hashGenesisBlock = genesis.GetHash();
+        assert(consensus.hashGenesisBlock == uint256S("0x5162fec28a8dfc55130d112632fea689332f77f4702dce4d15686a9c269e4360"));
+        assert(genesis.hashMerkleRoot == uint256S("0x0328893ed72f12d1986bfd01c8ebc825884358f1a7839b8ba4558112bff572b4"));
+
+
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();
