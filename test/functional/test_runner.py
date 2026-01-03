@@ -228,6 +228,7 @@ BASE_SCRIPTS = [
     'feature_addressindex.py',
     'feature_timestampindex.py',
     'feature_spentindex.py',
+    'feature_genesis_premine_spendable.py',
     'rpc_decodescript.py',
     'rpc_blockchain.py --v1transport',
     'rpc_blockchain.py --v2transport',
