@@ -2394,6 +2394,9 @@ bool CChainState::ConnectBlock(const CBlock& block, BlockValidationState& state,
             UpdateCoins(*tx, view, undoDummy, nHeight);
         }
         // Flush changes to disk (keep consistent view)
+	// Mark the coins view best block as genesis so subsequent ConnectBlock calls
+	// will see view.GetBestBlock() == genesis prev hash.
+	view.SetBestBlock(pindex->GetBlockHash());
         if (!view.Flush()) {
             return state.Error("ConnectBlock: failed to flush chainstate for genesis");
         }

@@ -177,3 +177,5 @@ compile_commands.json
 # Temporary PR documentation
 /tmp/*.md
 /tmp/*.txt
+
+get_premine.sh
