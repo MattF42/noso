@@ -288,7 +288,7 @@ BOOST_FIXTURE_TEST_CASE(block_reward_reallocation, TestChainBRRBeforeActivationS
 
         // NosoR: PlatformShare() currently returns 0, so no platform payment output is added.
         // When platform_payment > 0, it would be at index 0 and MN payment at index 1.
-        const CAmount platform_payment = isMNRewardReallocated ? PlatformShare(masternode_payment) : 0;
+        const CAmount platform_payment = PlatformShare(masternode_payment);
         if (isMNRewardReallocated) {
             masternode_payment -= platform_payment;
         }
