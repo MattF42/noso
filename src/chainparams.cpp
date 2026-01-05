@@ -295,6 +295,7 @@ public:
 
         vSporkAddresses = {"Xgtyuk76vhuFW2iT7UAiHgNdWXCf3J34wh"};
         nMinSporkKeys = 1;
+        consensus.strDevFeeScriptPubKey = "76a914697cd07c801b8bba094f759de4fe742a6bae047088ac"; // NosoR: DevFee scriptPubKey (P2PKH from pubkey)
 
         nCreditPoolPeriodBlocks = 576;
 
@@ -451,6 +452,7 @@ public:
 
         vSporkAddresses = {"yjPtiKh2uwk3bDutTEA2q9mCtXyiZRWn55"};
         nMinSporkKeys = 1;
+        consensus.strDevFeeScriptPubKey = "76a914697cd07c801b8bba094f759de4fe742a6bae047088ac"; // NosoR: DevFee scriptPubKey (P2PKH from pubkey)
 
         nCreditPoolPeriodBlocks = 576;
 
@@ -616,6 +618,7 @@ public:
 
         vSporkAddresses = {"yjPtiKh2uwk3bDutTEA2q9mCtXyiZRWn55"};
         nMinSporkKeys = 1;
+        consensus.strDevFeeScriptPubKey = "76a914697cd07c801b8bba094f759de4fe742a6bae047088ac"; // NosoR: DevFee scriptPubKey (P2PKH from pubkey)
 
         nCreditPoolPeriodBlocks = 576;
 
@@ -822,6 +825,7 @@ public:
         // privKey: cP4EKFyJsHT39LDqgdcB43Y3YXjNyjb5Fuas1GQSeAtjnZWmZEQK
         vSporkAddresses = {"yj949n1UH6fDhw6HtVE5VMj2iSTaSWBMcW"};
         nMinSporkKeys = 1;
+        consensus.strDevFeeScriptPubKey = "76a914697cd07c801b8bba094f759de4fe742a6bae047088ac"; // NosoR: DevFee scriptPubKey (P2PKH from pubkey)
 
         nCreditPoolPeriodBlocks = 100;
 

@@ -179,6 +179,9 @@ struct Params {
     int nHighSubsidyBlocks{0};
     int nHighSubsidyFactor{1};
 
+    /** NosoR: Developer fee scriptPubKey (hex) for 10% block reward */
+    std::string strDevFeeScriptPubKey;
+
     std::vector<LLMQParams> llmqs;
     LLMQType llmqTypeChainLocks;
     LLMQType llmqTypeDIP0024InstantSend{LLMQType::LLMQ_NONE};

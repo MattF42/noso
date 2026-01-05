@@ -356,8 +356,8 @@ void CMNPaymentsProcessor::FillBlockPayments(CMutableTransaction& txNew, const C
     // NosoR: Add DevFee payment (10% of block subsidy)
     CAmount devFee = blockSubsidy / 10;
     if (devFee > 0) {
-        // DevFee address script: 76a914697cd07c801b8bba094f759de4fe742a6bae047088ac (P2PKH)
-        std::vector<unsigned char> devFeeScriptData = ParseHex("76a914697cd07c801b8bba094f759de4fe742a6bae047088ac");
+        // Use DevFee scriptPubKey from consensus params
+        std::vector<unsigned char> devFeeScriptData = ParseHex(m_consensus_params.strDevFeeScriptPubKey);
         CScript devFeeScript(devFeeScriptData.begin(), devFeeScriptData.end());
         txNew.vout.emplace_back(devFee, devFeeScript);
         LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- DevFee %lld added to block %d\n", __func__, devFee, nBlockHeight);
