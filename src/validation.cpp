@@ -1596,10 +1596,9 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue, bool fV20Active)
     }
 
     if (fV20Active) {
-        // Once MNRewardReallocated activates, block reward is 80% of block subsidy (+ tx fees) since treasury is 20%
-        // Since the MN reward needs to be equal to 60% of the block subsidy (according to the proposal), MN reward is set to 75% of the block reward.
-        // Previous reallocation periods are dropped.
-        return blockValue * 3 / 4;
+        // NosoR: Masternodes receive 50% of total block value (subsidy + fees)
+        // This is part of the new emission schedule: 50% MN / 40% Miner / 10% DevFee
+        return blockValue / 2;
     }
 
     // Periods used to reallocate the masternode reward from 50% to 60%
