@@ -1488,10 +1488,8 @@ static std::pair<CAmount, CAmount> GetBlockSubsidyHelper(int nPrevBits, int nPre
     // NOSOR: Halving every 630,720 blocks (~3 years) with 50% reduction
     int nHalvings = (nPrevHeight + 1) / consensusParams.nSubsidyHalvingInterval;
     
-    // Apply halving by dividing by 2 for each halving period
-    for (int i = 0; i < nHalvings; i++) {
-        nSubsidy /= 2;
-    }
+    // Apply halving using bit shift (more efficient than loop)
+    nSubsidy >>= nHalvings;
 
     // NOSOR: DevFee is 10% of total subsidy (returned as superblock part)
     CAmount nSuperblockPart = nSubsidy / 10;
