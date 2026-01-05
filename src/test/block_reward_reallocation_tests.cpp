@@ -286,13 +286,12 @@ BOOST_FIXTURE_TEST_CASE(block_reward_reallocation, TestChainBRRBeforeActivationS
         CAmount masternode_payment = GetMasternodePayment(tip->nHeight, block_subsidy, isV20Active);
         const auto pblocktemplate = BlockAssembler(m_node.chainman->ActiveChainstate(), m_node, m_node.mempool.get(), Params()).CreateNewBlock(coinbasePubKey);
 
-        if (isMNRewardReallocated) {
-            const CAmount platform_payment = PlatformShare(masternode_payment);
-            masternode_payment -= platform_payment;
-        }
         // NosoR: PlatformShare() currently returns 0, so no platform payment output is added.
         // When platform_payment > 0, it would be at index 0 and MN payment at index 1.
-        const CAmount platform_payment = isMNRewardReallocated ? PlatformShare(GetMasternodePayment(tip->nHeight, block_subsidy, isV20Active)) : 0;
+        const CAmount platform_payment = isMNRewardReallocated ? PlatformShare(masternode_payment) : 0;
+        if (isMNRewardReallocated) {
+            masternode_payment -= platform_payment;
+        }
         size_t payment_index = (isMNRewardReallocated && platform_payment > 0) ? 1 : 0;
 
         BOOST_CHECK_EQUAL(pblocktemplate->voutMasternodePayments[payment_index].nValue, masternode_payment);
