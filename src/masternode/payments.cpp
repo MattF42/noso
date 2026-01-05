@@ -18,6 +18,7 @@
 #include <script/standard.h>
 #include <tinyformat.h>
 #include <util/ranges.h>
+#include <util/strencodings.h>
 #include <validation.h>
 
 #include <cassert>
@@ -25,10 +26,9 @@
 
 CAmount PlatformShare(const CAmount reward)
 {
-    const CAmount platformReward = reward * 375 / 1000;
-    bool ok = MoneyRange(platformReward);
-    assert(ok);
-    return platformReward;
+    // NosoR: Disable Credit Pool locking (return 0 instead of 37.5%)
+    // This fixes the bad-cbtx-assetlocked-amount error at DIP003 activation
+    return 0;
 }
 
 [[nodiscard]] bool CMNPaymentsProcessor::GetBlockTxOuts(const CBlockIndex* pindexPrev, const CAmount blockSubsidy, const CAmount feeReward,
@@ -353,6 +353,16 @@ void CMNPaymentsProcessor::FillBlockPayments(CMutableTransaction& txNew, const C
     txNew.vout.insert(txNew.vout.end(), voutMasternodePaymentsRet.begin(), voutMasternodePaymentsRet.end());
     txNew.vout.insert(txNew.vout.end(), voutSuperblockPaymentsRet.begin(), voutSuperblockPaymentsRet.end());
 
+    // NosoR: Add DevFee payment (10% of block subsidy)
+    CAmount devFee = blockSubsidy / 10;
+    if (devFee > 0) {
+        // DevFee address script: 76a914697cd07c801b8bba094f759de4fe742a6bae047088ac (P2PKH)
+        std::vector<unsigned char> devFeeScriptData = ParseHex("76a914697cd07c801b8bba094f759de4fe742a6bae047088ac");
+        CScript devFeeScript(devFeeScriptData.begin(), devFeeScriptData.end());
+        txNew.vout.emplace_back(devFee, devFeeScript);
+        LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- DevFee %lld added to block %d\n", __func__, devFee, nBlockHeight);
+    }
+
     std::string voutMasternodeStr;
     for (const auto& txout : voutMasternodePaymentsRet) {
         // subtract MN payment from miner reward
@@ -360,6 +370,11 @@ void CMNPaymentsProcessor::FillBlockPayments(CMutableTransaction& txNew, const C
         if (!voutMasternodeStr.empty())
             voutMasternodeStr += ",";
         voutMasternodeStr += txout.ToString();
+    }
+
+    // Subtract DevFee from miner reward
+    if (devFee > 0) {
+        txNew.vout[0].nValue -= devFee;
     }
 
     LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- nBlockHeight %d blockReward %lld voutMasternodePaymentsRet \"%s\" txNew %s", __func__, /* Continued */
