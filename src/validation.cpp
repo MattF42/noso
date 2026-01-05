@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2021 The Bitcoin Core developers
 // Copyright (c) 2014-2025 The Dash Core developers
+// Copyright (c) 2026 The NOSOR Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -2218,14 +2219,6 @@ bool CChainState::ConnectBlock(const CBlock& block, BlockValidationState& state,
     }
     nBlocksTotal++;
 
-    // Special case for the genesis block, skipping connection of its transactions
-    // (its coinbase is unspendable)
-    if (block_hash == m_params.GetConsensus().hashGenesisBlock) {
-        if (!fJustCheck)
-            view.SetBestBlock(pindex->GetBlockHash());
-        return true;
-    }
-
     bool fScriptChecks = true;
     if (!hashAssumeValid.IsNull()) {
         // We've been configured with the hash of a block which has been externally verified to have a valid history.
@@ -2278,6 +2271,35 @@ bool CChainState::ConnectBlock(const CBlock& block, BlockValidationState& state,
     // before the first had been spent.  Since those coinbases are sufficiently buried it's no longer possible to create further
     // duplicate transactions descending from the known pairs either.
     // If we're on the known chain at height greater than where BIP34 activated, we can save the db accesses needed for the BIP30 check.
+
+   if (pindex->pprev == nullptr) {
+        // Special-case genesis block:
+        // - Validate the block normally up to the point where ConnectBlock would normally
+        //   apply transactions to the UTXO set.
+        // - Apply coinbase outputs into view without relying on pindex->pprev or undo data.
+        //
+        // This keeps genesis outputs in chainstate and avoids dereferencing pprev.
+	int nHeight = pindex->nHeight;
+        // UpdateCoins requires a CTxUndo reference even if we don't persist undo for genesis.
+        CTxUndo undoDummy;
+        for (const CTransactionRef& tx : block.vtx) {
+            // Apply outputs into the UTXO set at height 0 using a dummy undo.
+            UpdateCoins(*tx, view, undoDummy, nHeight);
+        }
+        // Flush changes to disk (keep consistent view)
+	// Mark the coins view best block as genesis so subsequent ConnectBlock calls
+	// will see view.GetBestBlock() == genesis prev hash.
+	view.SetBestBlock(pindex->GetBlockHash());
+        if (!view.Flush()) {
+            return state.Error("ConnectBlock: failed to flush chainstate for genesis");
+        }
+
+        // We've applied genesis coinbase outputs to the UTXO set; nothing more to do here.
+        return true;
+    } 
+
+
+
     assert(pindex->pprev);
     CBlockIndex* pindexBIP34height = pindex->pprev->GetAncestor(m_params.GetConsensus().BIP34Height);
     //Only continue to enforce if we're below BIP34 activation height or the block hash at that height doesn't correspond.

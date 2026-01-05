@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Copyright (c) 2025 The Dash Core developers
+# Copyright (c) 2026 The NOSOR Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -21,10 +22,10 @@ TARGETS=(
   # Bundle restored from artifact
   "${BUNDLE_KEY}.tar.zst"
   # Binaries not needed by functional tests
-  "build-ci/dashcore-${BUILD_TARGET}/src/dash-tx"
+  "build-ci/dashcore-${BUILD_TARGET}/src/nosor-tx"
   "build-ci/dashcore-${BUILD_TARGET}/src/bench/bench_dash"
-  "build-ci/dashcore-${BUILD_TARGET}/src/qt/dash-qt"
-  "build-ci/dashcore-${BUILD_TARGET}/src/qt/test/test_dash-qt"
+  "build-ci/dashcore-${BUILD_TARGET}/src/qt/nosor-qt"
+  "build-ci/dashcore-${BUILD_TARGET}/src/qt/test/test_nosor-qt"
   "build-ci/dashcore-${BUILD_TARGET}/src/test/test_dash"
   "build-ci/dashcore-${BUILD_TARGET}/src/test/fuzz/fuzz"
   # Misc. files that can be heavy

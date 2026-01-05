@@ -1,4 +1,5 @@
 // Copyright (c) 2023-2024 The Dash Core developers
+// Copyright (c) 2026 The NOSOR Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -252,9 +253,15 @@ CCreditPoolDiff::CCreditPoolDiff(CCreditPool starter, const CBlockIndex* pindexP
 {
     assert(pindexPrev);
 
-    if (DeploymentActiveAfter(pindexPrev, consensusParams, Consensus::DEPLOYMENT_MN_RR)) {
-        // If credit pool exists, it means v20 is activated
-        platformReward = PlatformShare(GetMasternodePayment(pindexPrev->nHeight + 1, blockSubsidy, /*fV20Active=*/ true));
+    // if (DeploymentActiveAfter(pindexPrev, consensusParams, Consensus::DEPLOYMENT_MN_RR)) {
+        // // If credit pool exists, it means v20 is activated
+        // platformReward = PlatformShare(GetMasternodePayment(pindexPrev->nHeight + 1, blockSubsidy, /*fV20Active=*/ true));
+    // }
+     if (DeploymentActiveAfter(pindexPrev, consensusParams, Consensus::DEPLOYMENT_MN_RR)) {
+        // If credit pool exists, compute platformReward using the actual V20 activation state
+        // (don't force 'true' here; use the protocol state at that height).
+        const bool fV20Active = DeploymentActiveAfter(pindexPrev, consensusParams, Consensus::DEPLOYMENT_V20);
+        platformReward = PlatformShare(GetMasternodePayment(pindexPrev->nHeight + 1, blockSubsidy, fV20Active));
     }
 }
 

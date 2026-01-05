@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2023 The Dash Core developers
+// Copyright (c) 2026 The NOSOR Core developers
 // Copyright (c) 2015 Microsoft Corporation. All rights reserved.
 //
 // This code is licensed under the MIT License (MIT).

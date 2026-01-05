@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2021 The Bitcoin Core developers
 // Copyright (c) 2014-2024 The Dash Core developers
+// Copyright (c) 2026 The NOSOR Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -316,8 +317,8 @@ static RPCHelpMan addnode()
         },
         RPCResult{RPCResult::Type::NONE, "", ""},
         RPCExamples{
-            HelpExampleCli("addnode", "\"192.168.0.6:9999\" \"onetry\" true")
-    + HelpExampleRpc("addnode", "\"192.168.0.6:9999\", \"onetry\" true")
+            HelpExampleCli("addnode", "\"192.168.0.6:20666\" \"onetry\" true")
+    + HelpExampleRpc("addnode", "\"192.168.0.6:20666\", \"onetry\" true")
         },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
 {
@@ -438,9 +439,9 @@ static RPCHelpMan disconnectnode()
         },
         RPCResult{RPCResult::Type::NONE, "", ""},
         RPCExamples{
-            HelpExampleCli("disconnectnode", "\"192.168.0.6:9999\"")
+            HelpExampleCli("disconnectnode", "\"192.168.0.6:20666\"")
     + HelpExampleCli("disconnectnode", "\"\" 1")
-    + HelpExampleRpc("disconnectnode", "\"192.168.0.6:9999\"")
+    + HelpExampleRpc("disconnectnode", "\"192.168.0.6:20666\"")
     + HelpExampleRpc("disconnectnode", "\"\", 1")
         },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
@@ -999,8 +1000,8 @@ static RPCHelpMan addpeeraddress()
             },
         },
         RPCExamples{
-            HelpExampleCli("addpeeraddress", "\"1.2.3.4\" 9999 true")
-    + HelpExampleRpc("addpeeraddress", "\"1.2.3.4\", 9999, true")
+            HelpExampleCli("addpeeraddress", "\"1.2.3.4\" 20666 true")
+    + HelpExampleRpc("addpeeraddress", "\"1.2.3.4\", 20666, true")
         },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
 {

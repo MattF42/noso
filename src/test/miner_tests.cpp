@@ -3,8 +3,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <chainparams.h>
+#include <consensus/coinbase_checks.h>
 #include <consensus/consensus.h>
 #include <consensus/merkle.h>
+#include <consensus/subsidy.h>
 #include <consensus/tx_verify.h>
 #include <consensus/validation.h>
 #include <node/miner.h>
@@ -642,6 +644,96 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     m_node.mempool->clear();
 
     TestPrioritisedMining(chainparams, scriptPubKey, txFirst);
+}
+
+// NOSOR: Test new subsidy split in coinbase construction
+BOOST_AUTO_TEST_CASE(nosor_subsidy_split_test)
+{
+    // Use regtest params
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::REGTEST);
+    
+    CScript scriptPubKey = CScript() << ParseHex("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f") << OP_CHECKSIG;
+    
+    LOCK(cs_main);
+    
+    // Get height 1 (next block after genesis)
+    int nHeight = 1;
+    
+    // Calculate expected subsidy for height 1
+    CAmount expectedSubsidy = GetBlockSubsidy(nHeight, chainParams->GetConsensus());
+    
+    // Expected: 12 COIN = 1,200,000,000 satoshis
+    BOOST_CHECK_EQUAL(expectedSubsidy, 12 * COIN);
+    BOOST_CHECK_EQUAL(expectedSubsidy, 1200000000LL);
+    
+    // Calculate expected split
+    SubsidySplit split = GetSubsidySplit(expectedSubsidy);
+    
+    // Verify split amounts
+    // Masternode: 50% = 600,000,000 sats
+    BOOST_CHECK_EQUAL(split.masternode, 600000000LL);
+    
+    // Miner: 40% = 480,000,000 sats
+    BOOST_CHECK_EQUAL(split.miner, 480000000LL);
+    
+    // Dev: 1% = 12,000,000 sats (floor of 1,200,000,000 / 100)
+    BOOST_CHECK_EQUAL(split.devfee, 12000000LL);
+    
+    // Community: remainder = 1,200,000,000 - 600,000,000 - 480,000,000 - 12,000,000 = 108,000,000 sats (9%)
+    BOOST_CHECK_EQUAL(split.community, 108000000LL);
+    
+    // Verify total equals expected subsidy (no rounding loss)
+    CAmount total = split.masternode + split.miner + split.devfee + split.community;
+    BOOST_CHECK_EQUAL(total, expectedSubsidy);
+    
+    // Verify DF scriptPubKey
+    CScript dfScriptPubKey = GetDFScriptPubKey();
+    std::vector<unsigned char> expectedDF = ParseHex("0014697cd07c801b8bba094f759de4fe742a6bae0470");
+    CScript expectedDFScript(expectedDF.begin(), expectedDF.end());
+    BOOST_CHECK(dfScriptPubKey == expectedDFScript);
+    
+    // Create a block template and verify coinbase outputs
+    std::unique_ptr<CBlockTemplate> pblocktemplate;
+    {
+        LOCK(m_node.mempool->cs);
+        BlockAssembler::Options options;
+        options.nBlockMaxSize = DEFAULT_BLOCK_MAX_SIZE;
+        options.blockMinFeeRate = CFeeRate(DEFAULT_BLOCK_MIN_TX_FEE);
+        BlockAssembler assembler(m_node.chainman->ActiveChainstate(), m_node, m_node.mempool.get(), *chainParams, options);
+        pblocktemplate = assembler.CreateNewBlock(scriptPubKey);
+    }
+    
+    BOOST_REQUIRE(pblocktemplate);
+    BOOST_REQUIRE(pblocktemplate->block.vtx.size() > 0);
+    
+    const CTransaction& coinbaseTx = *(pblocktemplate->block.vtx[0]);
+    
+    // Verify coinbase has at least 4 outputs: miner, dev, community, masternode
+    BOOST_REQUIRE(coinbaseTx.vout.size() >= 4);
+    
+    // vout[0]: Miner output (should have miner amount + fees)
+    // Note: fees are 0 in this test since mempool is empty
+    BOOST_CHECK_EQUAL(coinbaseTx.vout[0].nValue, split.miner); // 480,000,000
+    BOOST_CHECK(coinbaseTx.vout[0].scriptPubKey == scriptPubKey);
+    
+    // vout[1]: Dev output
+    BOOST_CHECK_EQUAL(coinbaseTx.vout[1].nValue, split.devfee); // 12,000,000
+    BOOST_CHECK(coinbaseTx.vout[1].scriptPubKey == dfScriptPubKey);
+    
+    // vout[2]: Community output
+    BOOST_CHECK_EQUAL(coinbaseTx.vout[2].nValue, split.community); // 108,000,000
+    BOOST_CHECK(coinbaseTx.vout[2].scriptPubKey == dfScriptPubKey);
+    
+    // vout[3]: Masternode output (fallback)
+    BOOST_CHECK_EQUAL(coinbaseTx.vout[3].nValue, split.masternode); // 600,000,000
+    BOOST_CHECK(coinbaseTx.vout[3].scriptPubKey == dfScriptPubKey);
+    
+    // Verify total coinbase output equals subsidy (no fees in this test)
+    CAmount totalOut = 0;
+    for (const auto& txout : coinbaseTx.vout) {
+        totalOut += txout.nValue;
+    }
+    BOOST_CHECK_EQUAL(totalOut, expectedSubsidy);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

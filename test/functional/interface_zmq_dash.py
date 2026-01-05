@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) 2018-2025 The Dash Core developers
+# Copyright (c) 2026 The NOSOR Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test the dash specific ZMQ notification interfaces."""
@@ -129,7 +130,7 @@ class DashZMQTest (DashTestFramework):
 
     def run_test(self):
         self.subscribers = {}
-        # Check that dashd has been built with ZMQ enabled.
+        # Check that nosord has been built with ZMQ enabled.
         config = configparser.ConfigParser()
         config.read_file(open(self.options.configfile))
         import zmq

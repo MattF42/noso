@@ -363,7 +363,7 @@ public Q_SLOTS:
     void showPeers();
     void showRepair();
 
-    /** Open external (default) editor with dash.conf */
+    /** Open external (default) editor with nosor.conf */
     void showConfEditor();
     /** Show folder with wallet backups in default file browser */
     void showBackups();

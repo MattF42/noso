@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2024 The Dash Core developers
+// Copyright (c) 2026 The NOSOR Core developers
 // Distributed under the MIT software license, see the accompanying
 
 #include <wallet/hdchain.h>

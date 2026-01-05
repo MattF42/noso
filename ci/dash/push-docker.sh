@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Copyright (c) 2021-2023 The Dash Core developers
+# Copyright (c) 2026 The NOSOR Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,7 +9,7 @@ export LC_ALL=C
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"/../.. || exit
 
-DOCKER_IMAGE=${DOCKER_IMAGE:-dashpay/dashd-develop}
+DOCKER_IMAGE=${DOCKER_IMAGE:-dashpay/nosord-develop}
 DOCKER_TAG=${DOCKER_TAG:-latest}
 
 if [ -n "$DOCKER_REPO" ]; then

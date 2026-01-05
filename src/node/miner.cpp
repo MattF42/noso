@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2021 The Bitcoin Core developers
 // Copyright (c) 2014-2025 The Dash Core developers
+// Copyright (c) 2026 The NOSOR Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,8 +10,10 @@
 #include <chain.h>
 #include <chainparams.h>
 #include <consensus/amount.h>
+#include <consensus/coinbase_checks.h>
 #include <consensus/consensus.h>
 #include <consensus/merkle.h>
+#include <consensus/subsidy.h>
 #include <consensus/tx_verify.h>
 #include <consensus/validation.h>
 #include <deploymentstatus.h>
@@ -256,15 +259,49 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     CMutableTransaction coinbaseTx;
     coinbaseTx.vin.resize(1);
     coinbaseTx.vin[0].prevout.SetNull();
+
+    // NOSOR: Use new subsidy schedule (12 COIN initial, halving every 630,720 blocks)
+    // Calculate total block subsidy using the new emission schedule
+    CAmount blockSubsidy = GetBlockSubsidy(nHeight, Params().GetConsensus());
+    
+    // Split subsidy according to NOSOR distribution:
+    // 50% masternode, 40% miner, 1% dev, 9% community
+    SubsidySplit split = GetSubsidySplit(blockSubsidy);
+    
+    // NOSOR: Construct coinbase outputs with proper subsidy split
+    // Note: This is the canonical coinbase construction for the new subsidy schedule.
+    // Future work will fully integrate masternode payment selection/routing and
+    // move validation enforcement into validation code.
+    
+    // vout[0]: Miner receives their share (40%) + all transaction fees
     coinbaseTx.vout.resize(1);
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
-
-    // NOTE: unlike in bitcoin, we need to pass PREVIOUS block height here
-    CAmount blockSubsidy = GetBlockSubsidyInner(pindexPrev->nBits, pindexPrev->nHeight, Params().GetConsensus(), fV20Active_context);
-    CAmount blockReward = blockSubsidy + nFees;
-
-    // Compute regular coinbase transaction.
-    coinbaseTx.vout[0].nValue = blockReward;
+    coinbaseTx.vout[0].nValue = split.miner + nFees;
+    
+    // NOSOR: Add dev and community fund outputs using DF P2WPKH placeholder
+    // DF scriptPubKey: 0014697cd07c801b8bba094f759de4fe742a6bae0470
+    CScript dfScriptPubKey = GetDFScriptPubKey();
+    
+    // Dev fund output (1% of subsidy)
+    CTxOut devOut;
+    devOut.scriptPubKey = dfScriptPubKey;
+    devOut.nValue = split.devfee;
+    coinbaseTx.vout.push_back(devOut);
+    
+    // Community fund output (9% of subsidy, includes any rounding residual)
+    CTxOut communityOut;
+    communityOut.scriptPubKey = dfScriptPubKey;
+    communityOut.nValue = split.community;
+    coinbaseTx.vout.push_back(communityOut);
+    
+    // NOSOR: Masternode payment (50% of subsidy)
+    // Fallback approach: append masternode output directly to preserve expected total.
+    // This ensures the coinbase pays the full subsidy amount (12 COIN at height 1).
+    // TODO: Integrate with masternode payment selection in future work.
+    CTxOut masternodeOut;
+    masternodeOut.scriptPubKey = dfScriptPubKey; // Placeholder for now
+    masternodeOut.nValue = split.masternode;
+    coinbaseTx.vout.push_back(masternodeOut);
 
     if (!fDIP0003Active_context) {
         coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
@@ -318,9 +355,11 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
         SetTxPayload(coinbaseTx, cbTx);
     }
 
-    // Update coinbase transaction with additional info about masternode and governance payments,
-    // get some info back to pass to getblocktemplate
-    m_chain_helper.mn_payments->FillBlockPayments(coinbaseTx, pindexPrev, blockSubsidy, nFees, pblocktemplate->voutMasternodePayments, pblocktemplate->voutSuperblockPayments);
+    // NOSOR: FillBlockPayments is commented out for now as we're using the fallback approach
+    // for masternode payments (appending masternode output directly in coinbase construction above).
+    // Future work will integrate proper masternode payment selection/routing and re-enable this.
+    // Note: This also skips superblock/governance payments for now.
+    // m_chain_helper.mn_payments->FillBlockPayments(coinbaseTx, pindexPrev, blockSubsidy, nFees, pblocktemplate->voutMasternodePayments, pblocktemplate->voutSuperblockPayments);
 
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
     pblocktemplate->vTxFees[0] = -nFees;

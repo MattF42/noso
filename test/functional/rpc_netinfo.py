@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) 2025 The Dash Core developers
+# Copyright (c) 2026 The NOSOR Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test network information fields across RPCs."""
@@ -25,7 +26,7 @@ from typing import List, Optional
 # Height at which BIP9 deployment DEPLOYMENT_V24 is activated
 V24_ACTIVATION_THRESHOLD = 100
 # See CMainParams in src/chainparams.cpp
-DEFAULT_PORT_MAINNET_CORE_P2P = 9999
+DEFAULT_PORT_MAINNET_CORE_P2P = 20666
 # See CRegTestParams in src/chainparams.cpp
 DEFAULT_PORT_PLATFORM_P2P = 22200
 DEFAULT_PORT_PLATFORM_HTTP = 22201
