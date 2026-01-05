@@ -1492,10 +1492,12 @@ static std::pair<CAmount, CAmount> GetBlockSubsidyHelper(int nPrevBits, int nPre
     // Apply halving using bit shift (more efficient than loop)
     nSubsidy >>= nHalvings;
 
-    // NOSOR: DevFee is 10% of total subsidy (returned as superblock part)
-    CAmount nSuperblockPart = nSubsidy / 10;
+    // NOSOR: DevFee is 10% of total subsidy
+    CAmount nDevFee = nSubsidy / 10;
     
-    return {nSubsidy - nSuperblockPart, nSuperblockPart};
+    // Return full subsidy and DevFee separately (do NOT subtract DevFee from subsidy)
+    // This ensures GetBlockSubsidy returns the full 12.0 coins, matching the total coinbase value
+    return {nSubsidy, nDevFee};
 }
 
 CAmount GetSuperblockSubsidyInner(int nPrevBits, int nPrevHeight, const Consensus::Params& consensusParams, bool fV20Active)
@@ -1519,10 +1521,13 @@ CAmount GetBlockSubsidy(const CBlockIndex* const pindex, const Consensus::Params
 
 CAmount GetMasternodePayment(int nHeight, CAmount blockValue, bool fV20Active)
 {
+    // NOSOR: Calculate DevFee (10% of blockValue)
+    CAmount nDevFee = blockValue / 10;
+    
     // NOSOR: Masternodes get 50% of total subsidy
-    // blockValue is subsidy minus DevFee (90% of total)
-    // Masternodes get 50% of total, which is (50/90) of blockValue = 5/9 of blockValue
-    return blockValue * 5 / 9;
+    // After subtracting DevFee, we have 90% remaining
+    // Masternodes get 50% of total = (50/90) of remaining = 5/9 of (blockValue - DevFee)
+    return (blockValue - nDevFee) * 5 / 9;
 }
 
 CoinsViews::CoinsViews(
