@@ -714,7 +714,7 @@ public:
     explicit CRegTestParams(const ArgsManager& args) {
         strNetworkID =  CBaseChainParams::REGTEST;
         consensus.nSubsidyHalvingInterval = 630720; // NOSOR: halving every 630,720 blocks (use same as mainnet for consistency)
-        consensus.nMasternodePaymentsStartBlock = 240;
+        consensus.nMasternodePaymentsStartBlock = 10;
         consensus.nMasternodePaymentsIncreaseBlock = 350;
         consensus.nMasternodePaymentsIncreasePeriod = 10;
         consensus.nInstantSendConfirmationsRequired = 2;
@@ -736,9 +736,9 @@ public:
         consensus.BIP147Height = 0;  // Always active unless overridden
         consensus.CSVHeight = 1;     // Always active unless overridden
         consensus.DIP0001Height = 1; // Always active unless overridden
-        consensus.DIP0003Height = 432; // Always active for DashTestFramework in functional tests (see dip3params)
+        consensus.DIP0003Height = 10; // Always active for DashTestFramework in functional tests (see dip3params)
                                        // For unit tests and for BitcoinTestFramework is disabled due to missing quorum commitment for blocks created by helpers such as create_blocks
-        consensus.DIP0003EnforcementHeight = 500;
+        consensus.DIP0003EnforcementHeight = 40;
         consensus.DIP0003EnforcementHash = uint256();
         consensus.DIP0008Height = 1; // Always active unless overridden
         consensus.BRRHeight = 1;     // Always active unless overridden
