@@ -51,7 +51,9 @@ CAmount PlatformShare(const CAmount reward)
         assert(MoneyRange(masternodeReward));
 
         LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- MN reward %lld reallocated to credit pool\n", __func__, platformReward);
-        voutMasternodePaymentsRet.emplace_back(platformReward, CScript() << OP_RETURN);
+        if (platformReward > 0) {
+            voutMasternodePaymentsRet.emplace_back(platformReward, CScript() << OP_RETURN);
+        }
     }
     const auto mnList = m_dmnman.GetListForBlock(pindexPrev);
     if (mnList.GetAllMNsCount() == 0) {

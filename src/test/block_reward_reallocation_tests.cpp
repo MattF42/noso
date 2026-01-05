@@ -286,11 +286,13 @@ BOOST_FIXTURE_TEST_CASE(block_reward_reallocation, TestChainBRRBeforeActivationS
         CAmount masternode_payment = GetMasternodePayment(tip->nHeight, block_subsidy, isV20Active);
         const auto pblocktemplate = BlockAssembler(m_node.chainman->ActiveChainstate(), m_node, m_node.mempool.get(), Params()).CreateNewBlock(coinbasePubKey);
 
+        // NosoR: PlatformShare() currently returns 0, so no platform payment output is added.
+        // When platform_payment > 0, it would be at index 0 and MN payment at index 1.
+        const CAmount platform_payment = PlatformShare(masternode_payment);
         if (isMNRewardReallocated) {
-            const CAmount platform_payment = PlatformShare(masternode_payment);
             masternode_payment -= platform_payment;
         }
-        size_t payment_index = isMNRewardReallocated ? 1 : 0;
+        size_t payment_index = (isMNRewardReallocated && platform_payment > 0) ? 1 : 0;
 
         BOOST_CHECK_EQUAL(pblocktemplate->voutMasternodePayments[payment_index].nValue, masternode_payment);
     }
@@ -319,8 +321,11 @@ BOOST_FIXTURE_TEST_CASE(block_reward_reallocation, TestChainBRRBeforeActivationS
         CAmount expected_mn_core_payment = expected_masternode_reward - expected_mn_platform_payment;
 
         BOOST_CHECK_EQUAL(pblocktemplate->block.vtx[0]->GetValueOut(), expected_block_reward);
-        BOOST_CHECK_EQUAL(pblocktemplate->voutMasternodePayments[1].nValue, masternode_payment);
-        BOOST_CHECK_EQUAL(pblocktemplate->voutMasternodePayments[1].nValue, expected_mn_core_payment);
+        // NosoR: PlatformShare() currently returns 0, so no platform payment output is added.
+        // When platform_payment > 0, it would be at index 0 and MN payment at index 1.
+        size_t payment_index = (platform_payment > 0) ? 1 : 0;
+        BOOST_CHECK_EQUAL(pblocktemplate->voutMasternodePayments[payment_index].nValue, masternode_payment);
+        BOOST_CHECK_EQUAL(pblocktemplate->voutMasternodePayments[payment_index].nValue, expected_mn_core_payment);
     }
 }
 
