@@ -42,8 +42,6 @@ private:
     const CSporkManager& m_sporkman;
 
 private:
-    [[nodiscard]] bool GetBlockTxOuts(const CBlockIndex* pindexPrev, const CAmount blockSubsidy, const CAmount feeReward,
-                                      std::vector<CTxOut>& voutMasternodePaymentsRet);
     [[nodiscard]] bool GetMasternodeTxOuts(const CBlockIndex* pindexPrev, const CAmount blockSubsidy, const CAmount feeReward,
                                       std::vector<CTxOut>& voutMasternodePaymentsRet);
     [[nodiscard]] bool IsTransactionValid(const CTransaction& txNew, const CBlockIndex* pindexPrev, const CAmount blockSubsidy,
@@ -55,6 +53,12 @@ public:
                                   const Consensus::Params& consensus_params, const CMasternodeSync& mn_sync, const CSporkManager& sporkman) :
         m_dmnman{dmnman}, m_govman{govman}, m_chainman{chainman}, m_consensus_params{consensus_params}, m_mn_sync{mn_sync},
         m_sporkman{sporkman} {}
+
+    // Public API for getting masternode payment outputs
+    // Returns the deterministic masternode payment output(s) for a block
+    // This is used by miner.cpp to construct coinbase with real MN payees when DIP0003 is enforced
+    [[nodiscard]] bool GetBlockTxOuts(const CBlockIndex* pindexPrev, const CAmount blockSubsidy, const CAmount feeReward,
+                                      std::vector<CTxOut>& voutMasternodePaymentsRet);
 
     bool IsBlockValueValid(const CBlock& block, const int nBlockHeight, const CAmount blockReward, std::string& strErrorRet, const bool check_superblock);
     bool IsBlockPayeeValid(const CTransaction& txNew, const CBlockIndex* pindexPrev, const CAmount blockSubsidy, const CAmount feeReward, const bool check_superblock);

@@ -309,8 +309,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
         // DIP0003 enforcement is active: Get actual masternode payee(s) with proper amounts
         // Use the MN list from the previous block to determine the payee for this block
         std::vector<CTxOut> vMasternodePayments;
-        if (m_chain_helper.mn_payments->GetMasternodeTxOuts(pindexPrev, blockSubsidy, nFees, vMasternodePayments) && !vMasternodePayments.empty()) {
-            // GetMasternodeTxOuts returns the masternode payment(s) with proper amounts and scripts
+        if (m_chain_helper.mn_payments->GetBlockTxOuts(pindexPrev, blockSubsidy, nFees, vMasternodePayments) && !vMasternodePayments.empty()) {
+            // GetBlockTxOuts returns the masternode payment(s) with proper amounts and scripts
             // The amounts include the masternode's share of fees
             // We need to subtract these from the miner's payment
             CAmount totalMNPayment = 0;
