@@ -308,13 +308,20 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
             for (const auto& mnPayment : vMasternodePayments) {
                 coinbaseTx.vout.push_back(mnPayment);
                 totalMNPayment += mnPayment.nValue;
-                LogPrint(BCLog::MNPAYMENTS, "CreateNewBlock -- MN payment of %lld to script %s\n", 
-                         mnPayment.nValue, HexStr(mnPayment.scriptPubKey));
+                if (LogAcceptCategory(BCLog::MNPAYMENTS)) {
+                    LogPrint(BCLog::MNPAYMENTS, "CreateNewBlock -- MN payment of %lld to script %s\n", 
+                             mnPayment.nValue, HexStr(mnPayment.scriptPubKey));
+                }
             }
-            // Subtract MN payment from miner (which includes their share of fees)
+            // Subtract MN's share of fees from miner payment
+            // totalMNPayment includes MN's share of both subsidy and fees
+            // split.masternode is only MN's share of subsidy
+            // So (totalMNPayment - split.masternode) is MN's share of fees
             coinbaseTx.vout[0].nValue -= (totalMNPayment - split.masternode);
-            LogPrint(BCLog::MNPAYMENTS, "CreateNewBlock -- Adjusted miner payment by %lld (MN total %lld, MN base %lld)\n", 
-                     totalMNPayment - split.masternode, totalMNPayment, split.masternode);
+            if (LogAcceptCategory(BCLog::MNPAYMENTS)) {
+                LogPrint(BCLog::MNPAYMENTS, "CreateNewBlock -- Adjusted miner payment by %lld (MN total %lld, MN base %lld)\n", 
+                         totalMNPayment - split.masternode, totalMNPayment, split.masternode);
+            }
         } else {
             // No payee found or error, use placeholder with split amount
             CTxOut masternodeOut;
