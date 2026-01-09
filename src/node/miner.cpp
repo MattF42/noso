@@ -326,9 +326,10 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
             // So (totalMNPayment - split.masternode) is MN's share of fees
             // Check for underflow (should never happen in practice)
             if (totalMNPayment >= split.masternode) {
-                coinbaseTx.vout[0].nValue -= (totalMNPayment - split.masternode);
+                const CAmount mnFeeShare = totalMNPayment - split.masternode;
+                coinbaseTx.vout[0].nValue -= mnFeeShare;
                 LogPrint(BCLog::MNPAYMENTS, "CreateNewBlock -- Adjusted miner payment by %lld (MN total %lld, MN base %lld)\n", 
-                         totalMNPayment - split.masternode, totalMNPayment, split.masternode);
+                         mnFeeShare, totalMNPayment, split.masternode);
             } else {
                 LogPrintf("WARNING: CreateNewBlock -- totalMNPayment (%lld) < split.masternode (%lld), no adjustment made\n",
                          totalMNPayment, split.masternode);
