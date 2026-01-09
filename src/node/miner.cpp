@@ -294,25 +294,37 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     communityOut.nValue = split.community;
     coinbaseTx.vout.push_back(communityOut);
     
-    // NOSOR: Masternode payment (50% of subsidy)
-    // Check if DIP0003 enforcement is active at this height
+    // NOSOR: Masternode payment (50% of subsidy + fees when DIP0003 is enforced)
+    // Check if DIP0003 enforcement is active at this height to determine payee
     if (DeploymentDIP0003Enforced(nHeight, chainparams.GetConsensus())) {
-        // DIP0003 enforcement is active: Get actual masternode payee(s)
+        // DIP0003 enforcement is active: Get actual masternode payee(s) with proper amounts
+        // Use the MN list from the previous block to determine the payee for this block
         std::vector<CTxOut> vMasternodePayments;
-        if (m_chain_helper.mn_payments->GetMasternodeTxOuts(pindexPrev, blockSubsidy, nFees, vMasternodePayments)) {
-            // Add the masternode payment outputs with proper payee addresses
+        if (m_chain_helper.mn_payments->GetMasternodeTxOuts(pindexPrev, blockSubsidy, nFees, vMasternodePayments) && !vMasternodePayments.empty()) {
+            // GetMasternodeTxOuts returns the masternode payment(s) with proper amounts and scripts
+            // The amounts include the masternode's share of fees
+            // We need to subtract these from the miner's payment
+            CAmount totalMNPayment = 0;
             for (const auto& mnPayment : vMasternodePayments) {
                 coinbaseTx.vout.push_back(mnPayment);
+                totalMNPayment += mnPayment.nValue;
+                LogPrint(BCLog::MNPAYMENTS, "CreateNewBlock -- MN payment of %lld to script %s\n", 
+                         mnPayment.nValue, HexStr(mnPayment.scriptPubKey));
             }
+            // Subtract MN payment from miner (which includes their share of fees)
+            coinbaseTx.vout[0].nValue -= (totalMNPayment - split.masternode);
+            LogPrint(BCLog::MNPAYMENTS, "CreateNewBlock -- Adjusted miner payment by %lld (MN total %lld, MN base %lld)\n", 
+                     totalMNPayment - split.masternode, totalMNPayment, split.masternode);
         } else {
-            // Fallback: use placeholder if we can't get proper payee
+            // No payee found or error, use placeholder with split amount
             CTxOut masternodeOut;
             masternodeOut.scriptPubKey = dfScriptPubKey;
             masternodeOut.nValue = split.masternode;
             coinbaseTx.vout.push_back(masternodeOut);
+            LogPrint(BCLog::MNPAYMENTS, "CreateNewBlock -- No MN payee found, using placeholder\n");
         }
     } else {
-        // DIP0003 enforcement not active yet: use placeholder address
+        // DIP0003 enforcement not active yet: use placeholder address with split amount
         CTxOut masternodeOut;
         masternodeOut.scriptPubKey = dfScriptPubKey;
         masternodeOut.nValue = split.masternode;
