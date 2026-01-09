@@ -295,13 +295,29 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     coinbaseTx.vout.push_back(communityOut);
     
     // NOSOR: Masternode payment (50% of subsidy)
-    // Fallback approach: append masternode output directly to preserve expected total.
-    // This ensures the coinbase pays the full subsidy amount (12 COIN at height 1).
-    // TODO: Integrate with masternode payment selection in future work.
-    CTxOut masternodeOut;
-    masternodeOut.scriptPubKey = dfScriptPubKey; // Placeholder for now
-    masternodeOut.nValue = split.masternode;
-    coinbaseTx.vout.push_back(masternodeOut);
+    // Check if DIP0003 enforcement is active at this height
+    if (DeploymentDIP0003Enforced(nHeight, chainparams.GetConsensus())) {
+        // DIP0003 enforcement is active: Get actual masternode payee(s)
+        std::vector<CTxOut> vMasternodePayments;
+        if (m_chain_helper.mn_payments->GetMasternodeTxOuts(pindexPrev, blockSubsidy, nFees, vMasternodePayments)) {
+            // Add the masternode payment outputs with proper payee addresses
+            for (const auto& mnPayment : vMasternodePayments) {
+                coinbaseTx.vout.push_back(mnPayment);
+            }
+        } else {
+            // Fallback: use placeholder if we can't get proper payee
+            CTxOut masternodeOut;
+            masternodeOut.scriptPubKey = dfScriptPubKey;
+            masternodeOut.nValue = split.masternode;
+            coinbaseTx.vout.push_back(masternodeOut);
+        }
+    } else {
+        // DIP0003 enforcement not active yet: use placeholder address
+        CTxOut masternodeOut;
+        masternodeOut.scriptPubKey = dfScriptPubKey;
+        masternodeOut.nValue = split.masternode;
+        coinbaseTx.vout.push_back(masternodeOut);
+    }
 
     if (!fDIP0003Active_context) {
         coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
