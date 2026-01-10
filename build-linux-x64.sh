@@ -34,4 +34,4 @@ export LD_LIBRARY_PATH="$DEPENDS_DIR/lib:$LD_LIBRARY_PATH"
 
 # Build using all CPU cores
 # make -j"$(nproc)"
-make -j 16
+make -j 8

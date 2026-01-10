@@ -741,7 +741,7 @@ public:
         consensus.DIP0001Height = 1; // Always active unless overridden
         consensus.DIP0003Height = 200; // Always active for DashTestFramework in functional tests (see dip3params)
                                        // For unit tests and for BitcoinTestFramework is disabled due to missing quorum commitment for blocks created by helpers such as create_blocks
-        consensus.DIP0003EnforcementHeight = 250;
+        consensus.DIP0003EnforcementHeight = 500;
         consensus.DIP0003EnforcementHash = uint256();
         consensus.DIP0008Height = 1; // Always active unless overridden
         consensus.BRRHeight = 1;     // Always active unless overridden
@@ -749,8 +749,8 @@ public:
         consensus.DIP0024Height = 1; // Always have dip0024 quorums unless overridden
         consensus.DIP0024QuorumsHeight = 1; // Always have dip0024 quorums unless overridden
         consensus.V19Height = 1; // Always active unless overridden
-        consensus.V20Height = consensus.DIP0003Height; // Active not earlier than dip0003. Functional tests (DashTestFramework) uses height 100 (same as coinbase maturity)
-        consensus.MN_RRHeight = consensus.V20Height; // MN_RR does not really have effect before v20 activation
+        consensus.V20Height = consensus.DIP0003Height; // V20 is important
+        consensus.MN_RRHeight = 999999999; // MN_RR NOT USED ON NOSOR
         consensus.WithdrawalsHeight = 600;
         consensus.MinBIP9WarningHeight = 0;
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 1
