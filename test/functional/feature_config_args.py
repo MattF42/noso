@@ -325,7 +325,6 @@ class ConfArgsTest(BitcoinTestFramework):
         self.test_connect_with_seednode()
         self.test_auto_create_datadir_and_conf()
 
-
         self.test_config_file_parser()
         self.test_invalid_command_line_options()
 

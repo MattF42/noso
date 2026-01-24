@@ -911,7 +911,7 @@ bool CheckDataDirOption()
                 fs::create_directories(default_datadir);
                 LogPrintf("Created default data directory: %s\n", fs::PathToString(default_datadir));
             } catch (const fs::filesystem_error& e) {
-                return error("Failed to create default data directory %s: %s", fs::PathToString(default_datadir), e.what());
+                return error("failed to create default data directory %s: %s", fs::PathToString(default_datadir), e.what());
             }
         }
         return true;
@@ -1123,13 +1123,6 @@ bool ArgsManager::ReadConfigFiles(std::string& error, bool ignore_invalid_keys)
                 tfm::format(std::cerr, "warning: -includeconf cannot be used from included files; ignoring -includeconf=%s\n", conf_file_name);
             }
         }
-    } else {
-        // Create an empty dash.conf if it does not exist
-        std::ofstream configFile{GetConfigFile(conf_path), std::ios_base::app};
-        if (!configFile.good())
-            return false;
-        configFile.close();
-        return true; // Nothing to read, so just return
     }
 
     // If datadir is changed in .conf file:
