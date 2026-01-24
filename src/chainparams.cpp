@@ -412,9 +412,9 @@ public:
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
         // vSeeds.emplace_back("testnet-seed.dashdot.io."); // Just a static list of stable node(s), only supports x9
-	vSeeds.emplace_back("seed1", "38.242.252.153");
-	// vSeeds.emplace_back("seed2", "4.233.61.8");
-	// vSeeds.emplace_back("seed3", "149.102.187.227");
+	vSeeds.emplace_back("38.242.252.153");
+	vSeeds.emplace_back("4.233.61.8");
+	vSeeds.emplace_back("149.102.187.227");
 
 
         // Testnet Dash addresses start with 'y'
