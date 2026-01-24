@@ -34,11 +34,21 @@ bool CheckCoinbaseSubsidyAndPayees(const CTransaction& tx, const CBlockIndex* pi
                                    const Consensus::Params& consensusParams, std::string& strError);
 
 /**
- * Get the DF P2WPKH scriptPubKey used for dev and community fees.
+ * Get the DF P2WPKH scriptPubKey used for dev fee.
  * Placeholder: 0014697cd07c801b8bba094f759de4fe742a6bae0470
  * 
  * @return CScript containing the P2WPKH scriptPubKey
  */
 CScript GetDFScriptPubKey();
+
+/**
+ * Get the community fund scriptPubKey from consensus parameters.
+ * On testnet/regtest/devnet: P2WSH 2-of-3 multisig
+ * On mainnet: Same as devfee placeholder
+ * 
+ * @param consensusParams Consensus parameters
+ * @return CScript containing the community fund scriptPubKey
+ */
+CScript GetCommunityFundScriptPubKey(const Consensus::Params& consensusParams);
 
 #endif // BITCOIN_CONSENSUS_COINBASE_CHECKS_H

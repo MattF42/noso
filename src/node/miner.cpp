@@ -278,8 +278,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
     coinbaseTx.vout[0].nValue = split.miner + nFees;
     
-    // NOSOR: Add dev and community fund outputs using DF P2WPKH placeholder
-    // DF scriptPubKey: 0014697cd07c801b8bba094f759de4fe742a6bae0470
+    // NOSOR: Add dev and community fund outputs
+    // Dev fund uses DF P2WPKH placeholder
     CScript dfScriptPubKey = GetDFScriptPubKey();
     
     // Dev fund output (1% of subsidy)
@@ -289,8 +289,10 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     coinbaseTx.vout.push_back(devOut);
     
     // Community fund output (9% of subsidy, includes any rounding residual)
+    // Use network-specific scriptPubKey from consensus params
+    CScript communityScriptPubKey = GetCommunityFundScriptPubKey(chainparams.GetConsensus());
     CTxOut communityOut;
-    communityOut.scriptPubKey = dfScriptPubKey;
+    communityOut.scriptPubKey = communityScriptPubKey;
     communityOut.nValue = split.community;
     coinbaseTx.vout.push_back(communityOut);
     

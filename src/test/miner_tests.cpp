@@ -722,7 +722,9 @@ BOOST_AUTO_TEST_CASE(nosor_subsidy_split_test)
     
     // vout[2]: Community output
     BOOST_CHECK_EQUAL(coinbaseTx.vout[2].nValue, split.community); // 108,000,000
-    BOOST_CHECK(coinbaseTx.vout[2].scriptPubKey == dfScriptPubKey);
+    // On regtest, community should use P2WSH multisig
+    CScript expectedCommunityScript = GetCommunityFundScriptPubKey(chainParams->GetConsensus());
+    BOOST_CHECK(coinbaseTx.vout[2].scriptPubKey == expectedCommunityScript);
     
     // vout[3]: Masternode output (fallback)
     BOOST_CHECK_EQUAL(coinbaseTx.vout[3].nValue, split.masternode); // 600,000,000
@@ -734,6 +736,81 @@ BOOST_AUTO_TEST_CASE(nosor_subsidy_split_test)
         totalOut += txout.nValue;
     }
     BOOST_CHECK_EQUAL(totalOut, expectedSubsidy);
+}
+
+// Test that community fund uses correct scriptPubKey on different networks
+BOOST_AUTO_TEST_CASE(community_fund_scriptpubkey_test)
+{
+    // Test on regtest - should use P2WSH multisig
+    {
+        const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::REGTEST);
+        CScript communityScript = GetCommunityFundScriptPubKey(chainParams->GetConsensus());
+        
+        // Expected P2WSH multisig scriptPubKey for regtest
+        std::vector<unsigned char> expectedP2WSH = ParseHex("0020c07d1212d177be88a4ead55ac708e592e5e6e0d63fec41f30c29c6fd34c7ff24");
+        CScript expectedScript(expectedP2WSH.begin(), expectedP2WSH.end());
+        
+        BOOST_CHECK(communityScript == expectedScript);
+    }
+    
+    // Test on testnet - should also use P2WSH multisig
+    {
+        const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::TESTNET);
+        CScript communityScript = GetCommunityFundScriptPubKey(chainParams->GetConsensus());
+        
+        // Expected P2WSH multisig scriptPubKey for testnet
+        std::vector<unsigned char> expectedP2WSH = ParseHex("0020c07d1212d177be88a4ead55ac708e592e5e6e0d63fec41f30c29c6fd34c7ff24");
+        CScript expectedScript(expectedP2WSH.begin(), expectedP2WSH.end());
+        
+        BOOST_CHECK(communityScript == expectedScript);
+    }
+    
+    // Test on mainnet - should use same as devfee (backward compatibility)
+    {
+        const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+        CScript communityScript = GetCommunityFundScriptPubKey(chainParams->GetConsensus());
+        
+        // Expected mainnet scriptPubKey (same as devfee for backward compatibility)
+        std::vector<unsigned char> expectedMainnet = ParseHex("76a914697cd07c801b8bba094f759de4fe742a6bae047088ac");
+        CScript expectedScript(expectedMainnet.begin(), expectedMainnet.end());
+        
+        BOOST_CHECK(communityScript == expectedScript);
+    }
+    
+    // Verify that coinbase on regtest uses the new P2WSH for community output
+    {
+        const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::REGTEST);
+        CScript scriptPubKey = CScript() << ParseHex("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f") << OP_CHECKSIG;
+        
+        LOCK(cs_main);
+        
+        std::unique_ptr<CBlockTemplate> pblocktemplate;
+        {
+            LOCK(m_node.mempool->cs);
+            BlockAssembler::Options options;
+            options.nBlockMaxSize = DEFAULT_BLOCK_MAX_SIZE;
+            options.blockMinFeeRate = CFeeRate(DEFAULT_BLOCK_MIN_TX_FEE);
+            BlockAssembler assembler(m_node.chainman->ActiveChainstate(), m_node, m_node.mempool.get(), *chainParams, options);
+            pblocktemplate = assembler.CreateNewBlock(scriptPubKey);
+        }
+        
+        BOOST_REQUIRE(pblocktemplate);
+        BOOST_REQUIRE(pblocktemplate->block.vtx.size() > 0);
+        
+        const CTransaction& coinbaseTx = *(pblocktemplate->block.vtx[0]);
+        
+        // Coinbase should have at least 4 outputs
+        BOOST_REQUIRE(coinbaseTx.vout.size() >= 4);
+        
+        // vout[2] is the community fund output
+        CScript expectedCommunityScript = GetCommunityFundScriptPubKey(chainParams->GetConsensus());
+        BOOST_CHECK(coinbaseTx.vout[2].scriptPubKey == expectedCommunityScript);
+        
+        // Verify it's the P2WSH multisig
+        std::vector<unsigned char> expectedP2WSH = ParseHex("0020c07d1212d177be88a4ead55ac708e592e5e6e0d63fec41f30c29c6fd34c7ff24");
+        CScript expectedScript(expectedP2WSH.begin(), expectedP2WSH.end());
+        BOOST_CHECK(coinbaseTx.vout[2].scriptPubKey == expectedScript);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
