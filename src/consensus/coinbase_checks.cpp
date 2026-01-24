@@ -14,6 +14,13 @@ CScript GetDFScriptPubKey()
     return CScript(data.begin(), data.end());
 }
 
+CScript GetCommunityFundScriptPubKey(const Consensus::Params& consensusParams)
+{
+    // Use the community fund scriptPubKey from consensus params
+    std::vector<unsigned char> data = ParseHex(consensusParams.strCommunityFundScriptPubKey);
+    return CScript(data.begin(), data.end());
+}
+
 bool CheckCoinbaseSubsidyAndPayees(const CTransaction& tx, const CBlockIndex* pindex,
                                    const Consensus::Params& consensusParams, std::string& strError)
 {
