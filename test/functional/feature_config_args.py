@@ -275,13 +275,55 @@ class ConfArgsTest(BitcoinTestFramework):
                     unexpected_msgs=seednode_ignored):
                 self.restart_node(0, extra_args=[connect_arg, '-seednode=fakeaddress2'])
 
+    def test_auto_create_datadir_and_conf(self):
+        self.log.info('Test auto-creation of default datadir and config file')
+        self.stop_node(0)
+        
+        # Save the original datadir
+        original_datadir = self.nodes[0].datadir
+        
+        # Test 1: Verify that explicitly specified non-existent datadir still fails
+        non_existent_datadir = os.path.join(self.options.tmpdir, 'non_existent_test_dir')
+        self.nodes[0].assert_start_raises_init_error(
+            [f'-datadir={non_existent_datadir}'],
+            f'Error: Specified data directory "{non_existent_datadir}" does not exist.'
+        )
+        
+        # Test 2: Verify that explicitly specified non-existent config file still fails
+        non_existent_conf = os.path.join(original_datadir, 'non_existent_test.conf')
+        self.nodes[0].assert_start_raises_init_error(
+            [f'-conf={non_existent_conf}'],
+            f'Error: Error reading configuration file: specified config file "{non_existent_conf}" could not be opened.'
+        )
+        
+        # Test 3: Test auto-creation by removing the default config file and starting without -conf
+        # The test framework already creates datadir, so we just test config file creation
+        default_conf = os.path.join(original_datadir, 'nosor.conf')
+        if os.path.exists(default_conf):
+            os.remove(default_conf)
+        
+        # Start should succeed and auto-create the config file
+        with self.nodes[0].assert_debug_log(expected_msgs=['Created default config file:']):
+            self.start_node(0)
+        
+        # Verify the config file was created
+        assert os.path.exists(default_conf), "Default config file should have been created"
+        
+        # Verify it's empty or nearly empty (may contain some auto-generated comments in the future)
+        with open(default_conf, 'r', encoding='utf-8') as f:
+            content = f.read()
+            # The auto-created file should be empty
+            assert len(content) == 0, "Auto-created config file should be empty"
+        
+        self.stop_node(0)
+
     def run_test(self):
         self.test_log_buffer()
         self.test_args_log()
         self.test_seed_peers()
         self.test_networkactive()
         self.test_connect_with_seednode()
-
+        self.test_auto_create_datadir_and_conf()
 
         self.test_config_file_parser()
         self.test_invalid_command_line_options()
