@@ -902,7 +902,23 @@ fs::path GetBackupsDir()
 bool CheckDataDirOption()
 {
     const fs::path datadir{gArgs.GetPathArg("-datadir")};
-    return datadir.empty() || fs::is_directory(fs::absolute(datadir));
+    
+    // If -datadir is not set, create the default data directory if it doesn't exist
+    if (datadir.empty()) {
+        const fs::path default_datadir = GetDefaultDataDir();
+        if (!fs::exists(default_datadir)) {
+            try {
+                fs::create_directories(default_datadir);
+                LogPrintf("Created default data directory: %s\n", fs::PathToString(default_datadir));
+            } catch (const fs::filesystem_error& e) {
+                return error("Failed to create default data directory %s: %s", fs::PathToString(default_datadir), e.what());
+            }
+        }
+        return true;
+    }
+    
+    // If -datadir is explicitly set, it must exist (don't auto-create)
+    return fs::is_directory(fs::absolute(datadir));
 }
 
 fs::path GetConfigFile(const fs::path& configuration_file_path)
@@ -1012,6 +1028,29 @@ bool ArgsManager::ReadConfigFiles(std::string& error, bool ignore_invalid_keys)
     }
 
     const auto conf_path{GetConfigFilePath()};
+    
+    // If -conf is not explicitly set and config file doesn't exist, create an empty one
+    if (!IsArgSet("-conf") && !fs::exists(conf_path)) {
+        try {
+            // Ensure parent directory exists
+            fs::path parent = conf_path.parent_path();
+            if (!fs::exists(parent)) {
+                fs::create_directories(parent);
+            }
+            // Create empty config file
+            std::ofstream create_stream{conf_path};
+            if (!create_stream.good()) {
+                error = strprintf("failed to create default config file \"%s\".", fs::PathToString(conf_path));
+                return false;
+            }
+            create_stream.close();
+            LogPrintf("Created default config file: %s\n", fs::PathToString(conf_path));
+        } catch (const fs::filesystem_error& e) {
+            error = strprintf("failed to create default config file \"%s\": %s", fs::PathToString(conf_path), e.what());
+            return false;
+        }
+    }
+    
     std::ifstream stream{conf_path};
 
     // not ok to have a config file specified that cannot be opened
