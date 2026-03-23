@@ -1031,7 +1031,7 @@ bitcoin_bin_cxxflags = $(AM_CXXFLAGS) $(PIE_FLAGS)
 bitcoin_bin_ldflags = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-bitcoin_daemon_sources += dashd-res.rc
+bitcoin_daemon_sources += nosord-res.rc
 endif
 
 bitcoin_bin_ldadd = \
